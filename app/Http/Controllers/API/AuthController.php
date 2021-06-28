@@ -21,11 +21,11 @@ class AuthController extends BaseController
 
     public function register(Request $request)
     {
-        $validator =  Validator::make($request->all(), [
+               $validator =  Validator::make($request->all(), [
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
-            'phone' => 'required|string|max:20|unique:users',
-            'email' => 'required|string|email|max:255|unique:users',
+            'phone' => 'required|string|max:20',
+            'email' => 'required|string|email|max:255',
             'company_name' => 'required|string|min:6',
             'dob' => 'required|max:20',
             'password' => 'required|max:60',
@@ -42,26 +42,59 @@ class AuthController extends BaseController
 
 
         $user = new User;
-        $user->firstname = $request->input("firstname");
-        $user->lastname = $request->input("lastname");
-        $user->phone = $request->input("phone");
-        $user->company_name = $request->input("company_name");
-        $user->dob = $request->input("dob");
-        $user->device_type = $request->input("device_type");
-        $user->device_token = $request->input("device_token");
-        $user->gender = $request->input("gender");
-        $user->email = $request->input("email");
-        $user->password = Hash::make($request->input("password"));
-        $user->save();
-        $verification_otp = rand(1000, 9999); // verification otp
-        DB::table('otp_verify')->insert(['user_id' => $user->id, 'user_otp' => $verification_otp, 'expire_token' => '0', 'created_at' => date('Y-m-d H:i:s')]);
-        //Sent email verfication with pin to users...
-       //  emailTemplete($request, $verification_otp);
-        // return apiResponse('true', '200', 'Otp send to your registered email address', $user);
-        $success['token'] =  $user->createToken('api_token')->plainTextToken;
-        $success['user_id'] =  $user->id;
-        return $this->sendResponse($success, 'User created successfully.');
-    }
+        if(!$user_detail = User::where('email',$request->input("email"))->first()){
+            $user_detail = User::where('phone',$request->input("phone"))->first();
+        }
+        if($user_detail){
+            User::where('id',$user_detail->id)->update(
+                array(
+                    'firstname' => $request->input("firstname"),
+                    'lastname' => $request->input("lastname"),
+                    'phone' => $request->input("phone"),
+                    'company_name' => $request->input("company_name"),
+                    'dob' => $request->input("dob"),
+                    'device_type' => $request->input("device_type"),
+                    'device_token' => $request->input("device_token"),
+                    'gender' => $request->input("gender"),
+                    'email' => $request->input("email"),
+                    'password' => Hash::make($request->input("password"))
+                ));
+               $user->id =  $user_detail->id;
+        }else{
+            $user->firstname = $request->input("firstname");
+            $user->lastname = $request->input("lastname");
+            $user->phone = $request->input("phone");
+            $user->company_name = $request->input("company_name");
+            $user->dob = $request->input("dob");
+            $user->device_type = $request->input("device_type");
+            $user->device_token = $request->input("device_token");
+            $user->gender = $request->input("gender");
+            $user->email = $request->input("email");
+            $user->password = Hash::make($request->input("password"));
+            $user->save();
+        }
+            $verification_otp = rand(1000, 9999); // verification otp
+            $verification_otp = 1234; // verification otp
+            $users_otp = DB::table('otp_verify')->select('*')->where([['user_id', '=', $user->id]])->first();
+            if (!empty($users_otp)) {
+                $update_time = DB::table('otp_verify')
+                                ->where('user_id', $users_otp->user_id)
+                                ->update([
+                                    'user_otp' => $verification_otp, 
+                                    'expire_token' => '0', 
+                                    'created_at' => date('Y-m-d H:i:s')
+                                ]);
+            }else{
+                DB::table('otp_verify')->insert(['user_id' => $user->id, 'user_otp' => $verification_otp, 'expire_token' => '0', 'created_at' => date('Y-m-d H:i:s')]);
+            }
+           
+            //Sent email verfication with pin to users...
+           // emailTemplete($request, $verification_otp);
+            // return apiResponse('true', '200', 'Otp send to your registered email address', $user);
+            $success['token'] =  $user->createToken('api_token')->plainTextToken;
+            $success['user_id'] =  $user->id;
+            return $this->sendResponse($success, 'OTP has been send to your email. Please Verify your account');
+     }
 
     public function login(Request $request){
 
@@ -112,7 +145,7 @@ class AuthController extends BaseController
                'token' => $token
            ];
             if ($user->email_verified == '0') {
-                return $this->sendError('Your account is not verified yet.', []);
+                return $this->sendError('Your account is not Register.', []);
             }
             return $this->sendResponse($response, 'User signed in');
         
@@ -182,7 +215,7 @@ class AuthController extends BaseController
                     'created_at' => date('Y-m-d H:i:s'),
                 ]);
             // mail//
-           // emailTemplete($request, $verification_otp);
+            emailTemplete($request, $verification_otp);
             return $this->sendResponse('PIN resent to registered Email Address', 'Successfully');
         } else {
             return $this->sendError('User does not matched.', []);
@@ -203,7 +236,7 @@ class AuthController extends BaseController
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
         // Email
-          //emailTemplete($request,$verification_otp);
+          emailTemplete($request,$verification_otp);
           return $this->sendResponse('PIN sent to Email Address',[]);
     }else{
         return $this->sendError('User does not matched');
