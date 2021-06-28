@@ -146,9 +146,24 @@ class AuthController extends BaseController
                'token' => $token
            ];
             if ($user->email_verified == '0') {
-                return $this->sendError('Your account is not verified yet.', []);
+                return $this->sendError('Your account is not Register user.', []);
             }
-            return $this->sendResponse($response, 'User signed in');
+            if($user->email_verified == '1'){
+                $verification_otp = 4567;
+                $users_otp = DB::table('otp_verify')->select('*')->where([['user_id', '=', $user->id]])->first();
+                if (!empty($users_otp)) {
+                    $update_time = DB::table('otp_verify')
+                                    ->where('user_id', $users_otp->user_id)
+                                    ->update([
+                                        'user_otp' => $verification_otp, 
+                                        'expire_token' => '0', 
+                                        'created_at' => date('Y-m-d H:i:s')
+                                    ]);
+                }else{
+                    DB::table('otp_verify')->insert(['user_id' => $user->id, 'user_otp' => $verification_otp, 'expire_token' => '0', 'created_at' => date('Y-m-d H:i:s')]);
+                }
+            }
+            return $this->sendResponse($response, 'OTP has been send to your email acccount');
         
     }
 
@@ -181,7 +196,12 @@ class AuthController extends BaseController
                                 ]);
                             return $this->sendResponse('Account verified Successfully', 'Successfully');
                         } else {
-                            return $this->sendError('Account already verified.', []);
+                            $token = $users->CreateToken('myapptoken')->plainTextToken;
+                            $response =[
+                                'user' => $users,
+                                'token' => $token
+                            ];
+                            return $this->sendResponse($response, 'Successfully Logged In.');
                         }
                     } else {
                         $update_time = DB::table('otp_verify')
