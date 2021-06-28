@@ -163,7 +163,7 @@ class AuthController extends BaseController
                     DB::table('otp_verify')->insert(['user_id' => $user->id, 'user_otp' => $verification_otp, 'expire_token' => '0', 'created_at' => date('Y-m-d H:i:s')]);
                 }
             }
-            return $this->sendResponse($response, 'OTP has been send to your email acccount');
+            return $this->sendResponse($response, 'OTP has been send to your phone/email acccount');
         
     }
 
