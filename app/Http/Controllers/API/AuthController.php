@@ -258,7 +258,7 @@ class AuthController extends BaseController
             ]);
         // Email
             emailTemplete($request,$verification_otp);
-          return $this->sendResponse('PIN sent to Email Address',[]);
+          return $this->sendResponse([],'PIN sent to Email Address');
     }else{
         return $this->sendError('User does not matched');
     }
