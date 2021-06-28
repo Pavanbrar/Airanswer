@@ -73,7 +73,7 @@ class AuthController extends BaseController
             $user->password = Hash::make($request->input("password"));
             $user->save();
         }
-            $verification_otp = rand(1000, 9999); // verification otp
+           // $verification_otp = rand(1000, 9999); // verification otp
             $verification_otp = 1234; // verification otp
             $users_otp = DB::table('otp_verify')->select('*')->where([['user_id', '=', $user->id]])->first();
             if (!empty($users_otp)) {
@@ -149,7 +149,7 @@ class AuthController extends BaseController
                 return $this->sendError('Your account is not Register user.', []);
             }
             if($user->email_verified == '1'){
-                $verification_otp = 4567;
+                $verification_otp = 1234;
                 $users_otp = DB::table('otp_verify')->select('*')->where([['user_id', '=', $user->id]])->first();
                 if (!empty($users_otp)) {
                     $update_time = DB::table('otp_verify')
@@ -248,7 +248,8 @@ class AuthController extends BaseController
         $getuser = DB::table('users')->select('*')->where([['email', '=',$email]])->first();
         if($getuser){
             $userId=$getuser->id;
-            $verification_otp = rand(1000,9999);
+          //  $verification_otp = rand(1000,9999);
+            $verification_otp =1234;
            $update_otp = DB::table('otp_verify')
             ->where('user_id', $userId)
             ->update([
