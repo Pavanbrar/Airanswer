@@ -56,7 +56,7 @@ class AuthController extends BaseController
         $verification_otp = rand(1000, 9999); // verification otp
         DB::table('otp_verify')->insert(['user_id' => $user->id, 'user_otp' => $verification_otp, 'expire_token' => '0', 'created_at' => date('Y-m-d H:i:s')]);
         //Sent email verfication with pin to users...
-       //  emailTemplete($request, $verification_otp);
+        emailTemplete($request, $verification_otp);
         // return apiResponse('true', '200', 'Otp send to your registered email address', $user);
         $success['token'] =  $user->createToken('api_token')->plainTextToken;
         $success['user_id'] =  $user->id;
@@ -182,7 +182,7 @@ class AuthController extends BaseController
                     'created_at' => date('Y-m-d H:i:s'),
                 ]);
             // mail//
-           // emailTemplete($request, $verification_otp);
+            emailTemplete($request, $verification_otp);
             return $this->sendResponse('PIN resent to registered Email Address', 'Successfully');
         } else {
             return $this->sendError('User does not matched.', []);
@@ -203,7 +203,7 @@ class AuthController extends BaseController
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
         // Email
-          //emailTemplete($request,$verification_otp);
+            emailTemplete($request,$verification_otp);
           return $this->sendResponse('PIN sent to Email Address',[]);
     }else{
         return $this->sendError('User does not matched');
