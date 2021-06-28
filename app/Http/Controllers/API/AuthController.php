@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\User as UserResource;
-
+use Mail;
 class AuthController extends BaseController
 {
     public function index()
@@ -94,7 +94,7 @@ class AuthController extends BaseController
             $success['token'] =  $user->createToken('api_token')->plainTextToken;
             $success['user_id'] =  $user->id;
             return $this->sendResponse($success, 'OTP has been send to your email. Please Verify your account');
-     }
+}
 
     public function login(Request $request){
 
@@ -145,9 +145,25 @@ class AuthController extends BaseController
                'token' => $token
            ];
             if ($user->email_verified == '0') {
+
                 return $this->sendError('Your account is not Register.', []);
             }
-            return $this->sendResponse($response, 'User signed in');
+            if($user->email_verified == '1'){
+                $verification_otp = 4567;
+                $users_otp = DB::table('otp_verify')->select('*')->where([['user_id', '=', $user->id]])->first();
+                if (!empty($users_otp)) {
+                    $update_time = DB::table('otp_verify')
+                                    ->where('user_id', $users_otp->user_id)
+                                    ->update([
+                                        'user_otp' => $verification_otp, 
+                                        'expire_token' => '0', 
+                                        'created_at' => date('Y-m-d H:i:s')
+                                    ]);
+                }else{
+                    DB::table('otp_verify')->insert(['user_id' => $user->id, 'user_otp' => $verification_otp, 'expire_token' => '0', 'created_at' => date('Y-m-d H:i:s')]);
+                }
+            }
+            return $this->sendResponse($response, 'OTP has been send to your phone/email acccount');
         
     }
 
@@ -180,7 +196,12 @@ class AuthController extends BaseController
                                 ]);
                             return $this->sendResponse('Account verified Successfully', 'Successfully');
                         } else {
-                            return $this->sendError('Account already verified.', []);
+                            $token = $users->CreateToken('myapptoken')->plainTextToken;
+                            $response =[
+                                'user' => $users,
+                                'token' => $token
+                            ];
+                            return $this->sendResponse($response, 'Successfully Logged In.');
                         }
                     } else {
                         $update_time = DB::table('otp_verify')
@@ -236,7 +257,8 @@ class AuthController extends BaseController
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
         // Email
-          emailTemplete($request,$verification_otp);
+
+            emailTemplete($request,$verification_otp);
           return $this->sendResponse('PIN sent to Email Address',[]);
     }else{
         return $this->sendError('User does not matched');
