@@ -461,18 +461,59 @@ public function login(Request $request){
                         'url'=>'https://www.youtube.com/watch?v=i0ZabxXmH4Y',
                         'video_id'=>'i0ZabxXmH4Y',
                         'type'=>'video',
-                    ],
-                    [  
-                        
-                        'id'=>'5',
-                        'name'=>'covid-19',
-                        'url'=>'https://www.youtube.com/watch?v=i0ZabxXmH4Y',
-                        'video_id'=>'i0ZabxXmH4Y',
-                        'type'=>'video',
-                   ]
+                    ]
+            
               ];
        
         return apiResponse("true", "200", "information fetched successfully",$useful_info);
+    }
+
+    public function view_report(Request $request)
+    {
+
+        $device_id = $request->input('device_id');
+        $dates= $request->input('date');
+        $date =date('Y-m-d', strtotime($dates));
+       
+       
+        $report =[
+            [
+                'id'=>'1',
+                'date'=>'2021-07-21 00:00:00',
+                'device_id'=>'ASD23242342',
+               ' test_name'=>'Thyroid Test'
+            
+            ],
+            [
+               'id'=>'2',
+             'date'=>'2021-07-14 00:00:00',
+             'device_id'=>'FRT654576544',
+            ' test_name'=>'Covid Test'
+        ],
+           [
+                  'id'=>'3',
+                 'date'=>'2021-07-27 00:00:00',
+                 'device_id'=>'RTP6576576',
+                ' test_name'=>'asthma test'
+            ],
+
+        
+          ];
+
+     if($device_id=='ASD23242342' || $date=='2021-07-21'){
+
+            $report=$report[0];
+        }elseif($device_id=='FRT654576544' || $date=='2021-07-14'){
+            $report=$report[1]; 
+        }elseif($device_id=='RTP6576576' || $date=='2021-07-27'){
+            $report=$report[2]; 
+        }else{
+
+            $report=$report;
+        }
+       
+       
+        return apiResponse("true", "200", "Report has been fetched successfully",$report);
     }
 
 }
