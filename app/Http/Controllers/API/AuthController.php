@@ -429,7 +429,7 @@ public function login(Request $request){
         
         $get_devices = DB::table('devices')->select('*')->get();
        
-        return apiResponse("true", "200", "devices fetched successfully",$get_devices);
+        return apiResponse("true", "200", "devices has been fetched successfully",$get_devices);
     }
 
     public function useful_info(Request $request)
