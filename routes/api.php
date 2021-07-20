@@ -23,10 +23,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/',[AuthController::class,'index']);
     Route::post('logout',[AuthController::class,'logout']);  
     Route::put('update/{id}',[AuthController::class,'update']); 
-    Route::post('notification',[AuthController::class,'notification']);   
+    Route::post('notifications',[AuthController::class,'notification']);   
     Route::post('get_devices',[AuthController::class,'get_devices']); 
-    Route::post('useful_info',[AuthController::class,'useful_info']); 
-    Route::post('view_report',[AuthController::class,'view_report']); 
+    Route::post('useful_informations',[AuthController::class,'useful_info']); 
+    Route::post('reports',[AuthController::class,'view_report']); 
+    Route::post('get_user',[AuthController::class,'get_user']); 
     
     
 });

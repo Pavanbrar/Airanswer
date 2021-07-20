@@ -310,26 +310,26 @@ class AuthController extends BaseController
     }
 
     public function me(Request $request){
-        return $request->user();
+     
+        $user=$request->user();
+        return apiResponse(true, 200, "User data feteched",$user);
     }
 
-    // public function logout(Request $request){
-    //     $user = auth('api')->check(); 
-    //      if(!$user){
-    //         return $this->sendError('User Unauthorized',[]);
-    //      }
-    //       $user = auth('api')->user();
-    //       DB::table('users')->where('id', $user->id)->update(['device_type'=>'','device_token'=>'']);
-    //       return $this->sendResponse('Logout Successfully',[]);
-    // }
+
+    public function get_user(Request $request){
+     
+        $user=$request->user();
+        return apiResponse(true, 200, "User data feteched",$user);
+    }
+   
 
     public function logout(Request $request)
     {
         
         auth()->user()->tokens()->delete();
 
-     return apiResponse("true", "200", "User successfully logout");
-    
+   
+     return response(['success'=>false,'code'=>200,'message'=>"User successfully logout"]);
     }
 
 
@@ -350,8 +350,8 @@ public function login(Request $request){
     
     if (empty($field)) {
     return response()->json([
-        'success' => 'false',
-        'code' => '422',
+        'success' =>false,
+        'code' =>422,
         'message' => 'Please enter vald data'
     ]);
     }
@@ -367,8 +367,8 @@ public function login(Request $request){
     ]);
     if ($validator->fails()) {
     return response()->json([
-        'success' => 'false',
-        'code' => '422',
+        'success' => false,
+        'code' => 422,
         'message' => $validator->errors()
     ]);
     }
@@ -382,7 +382,7 @@ public function login(Request $request){
     }
     //check password
     if(!$user || !Hash::check($fields['password'],$user->password)){
-        return $this->sendError('Wrong Credientials.', ['error' => 'Unauthorised']);
+        return response(['success'=>false, 'code'=>201, 'message'=>"Wrong Credentials"]);
     }
     //
     $token = $user->CreateToken('myapptoken')->plainTextToken;
@@ -400,7 +400,7 @@ public function login(Request $request){
     ];
     
     
-    return apiResponse("true", "200", "Logged in successfully",$response);
+    return apiResponse(true, 200, "Logged in successfully",$response);
     
     }
 
@@ -411,7 +411,7 @@ public function login(Request $request){
       
       $user->update($request->all());
 
-      return apiResponse("true", "200", "User updated successfully",$user);
+      return apiResponse(true, 200, "User updated successfully",$user);
     }
 
 
@@ -421,15 +421,15 @@ public function login(Request $request){
        
         $notification = DB::table('notification')->select('*')->get();
        
-        return apiResponse("true", "200", "notifications fetched successfully",$notification);
+        return apiResponse(true, 200, "notifications fetched successfully",$notification);
     }
 
     public function get_devices(Request $request)
     {
         
-        $get_devices = DB::table('devices')->select('*')->get();
+        $get_devices = DB::table('devices')->select('id','device_id','device_name','created_at','updated_at')->get();
        
-        return apiResponse("true", "200", "devices has been fetched successfully",$get_devices);
+        return apiResponse(true, 200, "devices has been fetched successfully",$get_devices);
     }
 
     public function useful_info(Request $request)
@@ -437,27 +437,27 @@ public function login(Request $request){
         
         $useful_info =[
                 [
-                            'id'=>'1',
-                            'name'=>'covid 19 is airborne',
+                            'id'=>1,
+                            'value'=>'covid 19 is airborne',
                             'type'=>'text',
                 
                 ],
-                [        'id'=>'2',
-                            'name'=>'demo video',
+                [        'id'=>2,
+                            'value'=>'demo video',
                             'url'=>'https://youtube.com/watch?v=EngW7tLk6R8',
                             'video_id'=>'EngW7tLk6R8',
                             'type'=>'video',
                     ],
                    [
-                        'id'=>'3',
-                     'name'=>'covid 19 is airborne',
+                        'id'=>3,
+                     'value'=>'covid 19 is airborne',
                      'type'=>'text',
                 ],
 
                     [  
                         
-                        'id'=>'4',
-                        'name'=>'covid-19',
+                        'id'=>4,
+                        'value'=>'covid-19',
                         'url'=>'https://www.youtube.com/watch?v=i0ZabxXmH4Y',
                         'video_id'=>'i0ZabxXmH4Y',
                         'type'=>'video',
@@ -465,7 +465,7 @@ public function login(Request $request){
             
               ];
        
-        return apiResponse("true", "200", "information fetched successfully",$useful_info);
+        return apiResponse(true, 200, "information fetched successfully",$useful_info);
     }
 
     public function view_report(Request $request)
@@ -478,20 +478,20 @@ public function login(Request $request){
        
         $report =[
             [
-                'id'=>'1',
+                'id'=>1,
                 'date'=>'2021-07-21 00:00:00',
                 'device_id'=>'ASD23242342',
                ' test_name'=>'Thyroid Test'
             
             ],
             [
-               'id'=>'2',
+               'id'=>2,
              'date'=>'2021-07-14 00:00:00',
              'device_id'=>'FRT654576544',
             ' test_name'=>'Covid Test'
         ],
            [
-                  'id'=>'3',
+                  'id'=>3,
                  'date'=>'2021-07-27 00:00:00',
                  'device_id'=>'RTP6576576',
                 ' test_name'=>'asthma test'
@@ -513,7 +513,7 @@ public function login(Request $request){
         }
        
        
-        return apiResponse("true", "200", "Report has been fetched successfully",$report);
+        return apiResponse(true, 200, "Report has been fetched successfully",$report);
     }
 
 }
