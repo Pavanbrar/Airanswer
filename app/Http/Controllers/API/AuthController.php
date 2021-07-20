@@ -73,7 +73,7 @@ class AuthController extends BaseController
             $user->password = Hash::make($request->input("password"));
             $user->save();
         }
-            $verification_otp = rand(1000, 9999); // verification otp
+           // $verification_otp = rand(1000, 9999); // verification otp
             $verification_otp = 1234; // verification otp
             $users_otp = DB::table('otp_verify')->select('*')->where([['user_id', '=', $user->id]])->first();
             if (!empty($users_otp)) {
@@ -97,75 +97,75 @@ class AuthController extends BaseController
         
     }
 
-    public function login(Request $request){
+    // public function login(Request $request){
 
-        $field = "";
-        if (is_numeric($request->input('phone_or_email'))) {
-            $field = "phone";
-        } elseif (filter_var($request->input('phone_or_email'), FILTER_VALIDATE_EMAIL)) {
-            $field = "email";
-        }
-        if (empty($field)) {
-            return response()->json([
-                'success' => 'false',
-                'code' => '422',
-                'message' => 'Please enter data/vaild data'
-            ]);
-        }
+    //     $field = "";
+    //     if (is_numeric($request->input('phone_or_email'))) {
+    //         $field = "phone";
+    //     } elseif (filter_var($request->input('phone_or_email'), FILTER_VALIDATE_EMAIL)) {
+    //         $field = "email";
+    //     }
+    //     if (empty($field)) {
+    //         return response()->json([
+    //             'success' => 'false',
+    //             'code' => '422',
+    //             'message' => 'Please enter data/vaild data'
+    //         ]);
+    //     }
 
-        $request->merge([$field => $request->input('phone_or_email')]);
-        $validator = Validator::make($request->all(), [
-            $field => 'required|max:60',
-            'password' => 'required|max:60',
-        ]);
-        $fields = $request->validate([
-            $field => 'required|string',
-            'password' => 'required|string',
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => 'false',
-                'code' => '422',
-                'message' => $validator->errors()
-            ]);
-        }
-           //check email
-        if($field == 'email'){
-            $user = User::where('email',$fields['email'])->first();
-        }else{
-            $user = User::where('phone',$fields['phone'])->first();
-        }
-           //check password
-           if(!$user || !Hash::check($fields['password'],$user->password)){
-                return $this->sendError('Wrong Credientials.', ['error' => 'Unauthorised']);
-           }
-           //
-           $token = $user->CreateToken('myapptoken')->plainTextToken;
-           $response =[
-               'user' => $user,
-               'token' => $token
-           ];
-            if ($user->email_verified == '0') {
-                return $this->sendError('Your account is not Register user.', []);
-            }
-            if($user->email_verified == '1'){
-                $verification_otp = 4567;
-                $users_otp = DB::table('otp_verify')->select('*')->where([['user_id', '=', $user->id]])->first();
-                if (!empty($users_otp)) {
-                    $update_time = DB::table('otp_verify')
-                                    ->where('user_id', $users_otp->user_id)
-                                    ->update([
-                                        'user_otp' => $verification_otp, 
-                                        'expire_token' => '0', 
-                                        'created_at' => date('Y-m-d H:i:s')
-                                    ]);
-                }else{
-                    DB::table('otp_verify')->insert(['user_id' => $user->id, 'user_otp' => $verification_otp, 'expire_token' => '0', 'created_at' => date('Y-m-d H:i:s')]);
-                }
-            }
-            return $this->sendResponse($response, 'OTP has been send to your phone/email acccount');
+    //     $request->merge([$field => $request->input('phone_or_email')]);
+    //     $validator = Validator::make($request->all(), [
+    //         $field => 'required|max:60',
+    //         'password' => 'required|max:60',
+    //     ]);
+    //     $fields = $request->validate([
+    //         $field => 'required|string',
+    //         'password' => 'required|string',
+    //     ]);
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'success' => 'false',
+    //             'code' => '422',
+    //             'message' => $validator->errors()
+    //         ]);
+    //     }
+    //        //check email
+    //     if($field == 'email'){
+    //         $user = User::where('email',$fields['email'])->first();
+    //     }else{
+    //         $user = User::where('phone',$fields['phone'])->first();
+    //     }
+    //        //check password
+    //        if(!$user || !Hash::check($fields['password'],$user->password)){
+    //             return $this->sendError('Wrong Credientials.', ['error' => 'Unauthorised']);
+    //        }
+    //        //
+    //        $token = $user->CreateToken('myapptoken')->plainTextToken;
+    //        $response =[
+    //            'user' => $user,
+    //            'token' => $token
+    //        ];
+    //         if ($user->email_verified == '0') {
+    //             return $this->sendError('Your account is not Register user.', []);
+    //         }
+    //         if($user->email_verified == '1'){
+    //             $verification_otp = 1234;
+    //             $users_otp = DB::table('otp_verify')->select('*')->where([['user_id', '=', $user->id]])->first();
+    //             if (!empty($users_otp)) {
+    //                 $update_time = DB::table('otp_verify')
+    //                                 ->where('user_id', $users_otp->user_id)
+    //                                 ->update([
+    //                                     'user_otp' => $verification_otp, 
+    //                                     'expire_token' => '0', 
+    //                                     'created_at' => date('Y-m-d H:i:s')
+    //                                 ]);
+    //             }else{
+    //                 DB::table('otp_verify')->insert(['user_id' => $user->id, 'user_otp' => $verification_otp, 'expire_token' => '0', 'created_at' => date('Y-m-d H:i:s')]);
+    //             }
+    //         }
+    //         return $this->sendResponse($response, 'OTP has been send to your phone/email acccount');
         
-    }
+    // }
 
     public function verifyPhoneOtp(Request $request){
       
@@ -248,7 +248,8 @@ class AuthController extends BaseController
         $getuser = DB::table('users')->select('*')->where([['email', '=',$email]])->first();
         if($getuser){
             $userId=$getuser->id;
-            $verification_otp = rand(1000,9999);
+          //  $verification_otp = rand(1000,9999);
+            $verification_otp =1234;
            $update_otp = DB::table('otp_verify')
             ->where('user_id', $userId)
             ->update([
@@ -258,7 +259,7 @@ class AuthController extends BaseController
             ]);
         // Email
             emailTemplete($request,$verification_otp);
-          return $this->sendResponse('PIN sent to Email Address',[]);
+          return $this->sendResponse([],'PIN sent to Email Address');
     }else{
         return $this->sendError('User does not matched');
     }
@@ -311,13 +312,158 @@ class AuthController extends BaseController
         return $request->user();
     }
 
-    public function logout(Request $request){
-        $user = auth('api')->check(); 
-         if(!$user){
-            return $this->sendError('User Unauthorized',[]);
-         }
-          $user = auth('api')->user();
-          DB::table('users')->where('id', $user->id)->update(['device_type'=>'','device_token'=>'']);
-          return $this->sendResponse('Logout Successfully',[]);
+    // public function logout(Request $request){
+    //     $user = auth('api')->check(); 
+    //      if(!$user){
+    //         return $this->sendError('User Unauthorized',[]);
+    //      }
+    //       $user = auth('api')->user();
+    //       DB::table('users')->where('id', $user->id)->update(['device_type'=>'','device_token'=>'']);
+    //       return $this->sendResponse('Logout Successfully',[]);
+    // }
+
+    public function logout(Request $request)
+    {
+        
+        auth()->user()->tokens()->delete();
+
+     return apiResponse("true", "200", "User successfully logout");
+    
     }
+
+
+    //temporiory apis//
+
+
+    
+public function login(Request $request){
+
+    $field = "";
+    if (is_numeric($request->input('phone_or_email_or_username'))) {
+    $field = "phone";
+    } elseif (filter_var($request->input('phone_or_email_or_username'), FILTER_VALIDATE_EMAIL)) {
+    $field = "email";
+    }elseif(ctype_alnum($request->input('phone_or_email_or_username'))){
+        $field = "username";
+    }
+    
+    if (empty($field)) {
+    return response()->json([
+        'success' => 'false',
+        'code' => '422',
+        'message' => 'Please enter data/vaild data'
+    ]);
+    }
+    
+    $request->merge([$field => $request->input('phone_or_email_or_username')]);
+    $validator = Validator::make($request->all(), [
+    $field => 'required|max:60',
+    'password' => 'required|max:60',
+    ]);
+    $fields = $request->validate([
+    $field => 'required|string',
+    'password' => 'required|string',
+    ]);
+    if ($validator->fails()) {
+    return response()->json([
+        'success' => 'false',
+        'code' => '422',
+        'message' => $validator->errors()
+    ]);
+    }
+    //check email
+    if($field == 'email'){
+    $user = User::where('email',$fields['email'])->first();
+    }elseif($field == 'phone'){
+    $user = User::where('phone',$fields['phone'])->first();
+    }else{
+     $user = User::where('username',$fields['username'])->first();  
+    }
+    //check password
+    if(!$user || !Hash::check($fields['password'],$user->password)){
+        return $this->sendError('Wrong Credientials.', ['error' => 'Unauthorised']);
+    }
+    //
+    $token = $user->CreateToken('myapptoken')->plainTextToken;
+    $response =[
+       'user_id' => $user->id,
+       'username' => $user->username,
+       'firstname' => $user->firstname,
+       'lastname' => $user->lastname,
+       'dob' => $user->dob,
+       'phone' => $user->phone,
+       'gender'=>$user->gender,
+        'email' => $user->email,
+        'company_name' => $user->company_name,
+        'token' => $token
+    ];
+    
+    
+    return apiResponse("true", "200", "Logged in successfully",$response);
+    
+    }
+
+     public function update(Request $request, $id)
+    {
+       
+      $user= User::find($id);
+      
+      $user->update($request->all());
+
+      return apiResponse("true", "200", "User updated successfully",$user);
+    }
+
+
+   public function notification(Request $request)
+    {
+           
+       
+        $notification = DB::table('notification')->select('*')->get();
+       
+        return apiResponse("true", "200", "notifications fetched successfully",$notification);
+    }
+
+    public function get_devices(Request $request)
+    {
+        
+        $get_devices = DB::table('devices')->select('*')->get();
+       
+        return apiResponse("true", "200", "devices fetched successfully",$get_devices);
+    }
+
+    public function useful_info(Request $request)
+    {
+        
+        $useful_info =[
+                [
+                            'id'=>'1',
+                            'name'=>'covid 19 is airborne',
+                            'type'=>'text',
+                
+                ],
+                [        'id'=>'2',
+                            'name'=>'demo video',
+                            'url'=>'https://youtube.com/watch?v=EngW7tLk6R8',
+                            'video_id'=>'EngW7tLk6R8',
+                            'type'=>'video',
+                    ],
+                   [
+                        'id'=>'3',
+                     'name'=>'covid 19 is airborne',
+                     'type'=>'text',
+                ],
+
+                    [  
+                        
+                        'id'=>'4',
+                        'name'=>'covid-19',
+                        'url'=>'https://www.youtube.com/watch?v=i0ZabxXmH4Y',
+                        'video_id'=>'i0ZabxXmH4Y',
+                        'type'=>'video',
+                   ]
+              ];
+       
+        return apiResponse("true", "200", "information fetched successfully",$useful_info);
+    }
+
 }

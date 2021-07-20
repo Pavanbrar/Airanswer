@@ -19,8 +19,15 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/me', function(Request $request) {
         return auth()->user();
     });
+  
     Route::get('/',[AuthController::class,'index']);
-   // 
+    Route::post('logout',[AuthController::class,'logout']);  
+    Route::put('update/{id}',[AuthController::class,'update']); 
+    Route::post('notification',[AuthController::class,'notification']);   
+    Route::post('get_devices',[AuthController::class,'get_devices']); 
+    Route::post('useful_info',[AuthController::class,'useful_info']); 
+    
+    
     
 });
 
@@ -30,4 +37,4 @@ Route::post('verify-phone-otp',[AuthController::class,'verifyPhoneOtp']);
 Route::post('resendpin',[AuthController::class,'resendpin']);
 Route::post('forget_password',[AuthController::class,'forget_password']);
 Route::post('reset_password',[AuthController::class,'resetpassword']);
-Route::post('logout',[AuthController::class,'logout']);
+
