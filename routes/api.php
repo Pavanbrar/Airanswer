@@ -26,7 +26,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('notification',[AuthController::class,'notification']);   
     Route::post('get_devices',[AuthController::class,'get_devices']); 
     Route::post('useful_info',[AuthController::class,'useful_info']); 
-    
+    Route::post('view_report',[AuthController::class,'view_report']); 
     
     
 });
