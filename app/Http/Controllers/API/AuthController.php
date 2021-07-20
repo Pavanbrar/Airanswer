@@ -352,7 +352,7 @@ public function login(Request $request){
     return response()->json([
         'success' => 'false',
         'code' => '422',
-        'message' => 'Please enter data/vaild data'
+        'message' => 'Please enter vald data'
     ]);
     }
     
