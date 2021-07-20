@@ -21,7 +21,7 @@ class AuthController extends BaseController
 
     public function register(Request $request)
     {
-        $validator =  Validator::make($request->all(), [
+               $validator =  Validator::make($request->all(), [
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
@@ -94,8 +94,7 @@ class AuthController extends BaseController
             $success['token'] =  $user->createToken('api_token')->plainTextToken;
             $success['user_id'] =  $user->id;
             return $this->sendResponse($success, 'OTP has been send to your email. Please Verify your account');
-        
-    }
+}
 
     // public function login(Request $request){
 
@@ -146,10 +145,11 @@ class AuthController extends BaseController
     //            'token' => $token
     //        ];
     //         if ($user->email_verified == '0') {
-    //             return $this->sendError('Your account is not Register user.', []);
+
+    //             return $this->sendError('Your account is not Register.', []);
     //         }
     //         if($user->email_verified == '1'){
-    //             $verification_otp = 1234;
+    //             $verification_otp = 4567;
     //             $users_otp = DB::table('otp_verify')->select('*')->where([['user_id', '=', $user->id]])->first();
     //             if (!empty($users_otp)) {
     //                 $update_time = DB::table('otp_verify')
@@ -165,7 +165,7 @@ class AuthController extends BaseController
     //         }
     //         return $this->sendResponse($response, 'OTP has been send to your phone/email acccount');
         
-    // }
+    // // }
 
     public function verifyPhoneOtp(Request $request){
       
@@ -258,6 +258,7 @@ class AuthController extends BaseController
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
         // Email
+
             emailTemplete($request,$verification_otp);
           return $this->sendResponse([],'PIN sent to Email Address');
     }else{
