@@ -319,7 +319,21 @@ class AuthController extends BaseController
     public function get_user(Request $request){
      
         $user=$request->user();
-        return apiResponse(true, 200, "User data feteched",$user);
+        $response =[
+            'user_id' => $user->id,
+            'username' => $user->username,
+            'firstname' => $user->firstname,
+            'lastname' => $user->lastname,
+            'dob' => $user->dob,
+            'phone' => $user->phone,
+            'gender'=>$user->gender,
+             'email' => $user->email,
+             'company_name' => $user->company_name,
+             'status'=>$user->status,
+             'device_type'=>$user->device_type,
+             'device_token'=>$user->device_token,
+         ];
+        return apiResponse(true, 200, "User data feteched",$response);
     }
    
 
@@ -410,8 +424,23 @@ public function login(Request $request){
       $user= User::find($id);
       
       $user->update($request->all());
+      
+      $response =[
+        'user_id' => $user->id,
+        'username' => $user->username,
+        'firstname' => $user->firstname,
+        'lastname' => $user->lastname,
+        'dob' => $user->dob,
+        'phone' => $user->phone,
+        'gender'=>$user->gender,
+         'email' => $user->email,
+         'company_name' => $user->company_name,
+         'status'=>$user->status,
+         'device_type'=>$user->device_type,
+         'device_token'=>$user->device_token,
+     ];
 
-      return apiResponse(true, 200, "User updated successfully",$user);
+      return apiResponse(true, 200, "User updated successfully",$response);
     }
 
 
@@ -530,20 +559,20 @@ public function login(Request $request){
                 'id'=>1,
                 'date'=>'2021-07-21 00:00:00',
                 'device_id'=>'ASD23242342',
-               ' test_name'=>'Thyroid Test'
+               'test_name'=>'Thyroid Test'
             
             ],
             [
                'id'=>2,
              'date'=>'2021-07-14 00:00:00',
              'device_id'=>'FRT654576544',
-            ' test_name'=>'Covid Test'
+            'test_name'=>'Covid Test'
          ],
            [
                   'id'=>3,
                  'date'=>'2021-07-27 00:00:00',
                  'device_id'=>'RTP6576576',
-                ' test_name'=>'asthma test'
+                'test_name'=>'asthma test'
             ],
 
         
@@ -552,6 +581,7 @@ public function login(Request $request){
      if($device_id=='ASD23242342' || $date=='2021-07-21'){
 
             $report=$report[0];
+         
         }elseif($device_id=='FRT654576544' || $date=='2021-07-14'){
             $report=$report[1]; 
         }elseif($device_id=='RTP6576576' || $date=='2021-07-27'){
@@ -574,13 +604,16 @@ public function login(Request $request){
             $no_of_records_per_page = 2;
         } 
          $offset = ($pageno-1) * $no_of_records_per_page;
-          
-         $report = array_slice( $report, $offset, $no_of_records_per_page );
-         if(count($report) <= 0){
+          if($per_page=='' && $page_no==''){
+            $report_array = $report;
+          }else{
+         $report_array = array_slice( $report, $offset, $no_of_records_per_page );
+          }
+         if(count($report_array) <= 0){
             return apiResponse(false, 201, "Reports not found",$report);
          }else{
 
-            return apiResponse(true, 200, "Report has been fetched successfully",$report);
+            return apiResponse(true, 200, "Report has been fetched successfully",$report_array);
 
          }
        
