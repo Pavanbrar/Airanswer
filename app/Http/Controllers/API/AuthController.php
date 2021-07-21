@@ -580,12 +580,15 @@ public function login(Request $request){
 
      if($device_id=='ASD23242342' || $date=='2021-07-21'){
 
-            $report=$report[0];
+            $reports[]=$report[0];
+            $report=$reports;
          
         }elseif($device_id=='FRT654576544' || $date=='2021-07-14'){
-            $report=$report[1]; 
+            $reports[]=$report[1];
+            $report=$reports;
         }elseif($device_id=='RTP6576576' || $date=='2021-07-27'){
-            $report=$report[2]; 
+            $reports[]=$report[2];
+            $report=$reports;
         }else{
 
             $report=$report;
@@ -606,11 +609,12 @@ public function login(Request $request){
          $offset = ($pageno-1) * $no_of_records_per_page;
           if($per_page=='' && $page_no==''){
             $report_array = $report;
+          
           }else{
          $report_array = array_slice( $report, $offset, $no_of_records_per_page );
           }
          if(count($report_array) <= 0){
-            return apiResponse(false, 201, "Reports not found",$report);
+            return apiResponse(false, 201, "Reports not found",$report_array);
          }else{
 
             return apiResponse(true, 200, "Report has been fetched successfully",$report_array);
