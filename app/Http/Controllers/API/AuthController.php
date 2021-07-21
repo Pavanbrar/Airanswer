@@ -463,7 +463,7 @@ public function login(Request $request){
          $offset = ($pageno-1) * $no_of_records_per_page;
           
        
-        $notification = DB::table('notification')->select('*')->skip($offset)->take($no_of_records_per_page)->get();
+        $notification = DB::table('notification')->select('*')->orderBy('id', 'desc')->skip($offset)->take($no_of_records_per_page)->get();
          if(count($notification) <= 0){
             return apiResponse(false, 201, "notifications not found",$notification);
          }else{
@@ -477,7 +477,7 @@ public function login(Request $request){
     public function get_devices(Request $request)
     {
         
-        $get_devices = DB::table('devices')->select('id','device_id','device_name','created_at','updated_at')->get();
+        $get_devices = DB::table('devices')->select('id','device_id','device_name','created_at','updated_at')->orderBy('id', 'desc')->get();
        
         if(count($get_devices) <= 0){
 
@@ -491,23 +491,7 @@ public function login(Request $request){
     {
         
         $useful_info =[
-                [
-                            'id'=>1,
-                            'value'=>'covid 19 is airborne',
-                            'type'=>'text',
-                
-                ],
-                [        'id'=>2,
-                            'value'=>'demo video',
-                            'url'=>'https://youtube.com/watch?v=EngW7tLk6R8',
-                            'video_id'=>'EngW7tLk6R8',
-                            'type'=>'video',
-                    ],
-                   [
-                        'id'=>3,
-                     'value'=>'covid 19 is airborne',
-                     'type'=>'text',
-                ],
+               
 
                     [  
                         
@@ -516,10 +500,29 @@ public function login(Request $request){
                         'url'=>'https://www.youtube.com/watch?v=i0ZabxXmH4Y',
                         'video_id'=>'i0ZabxXmH4Y',
                         'type'=>'video',
-                    ]
+                    ],
+                    [
+                        'id'=>3,
+                     'value'=>'covid 19 is airborne',
+                     'type'=>'text',
+                ],
+                [        'id'=>2,
+                            'value'=>'demo video',
+                            'url'=>'https://youtube.com/watch?v=EngW7tLk6R8',
+                            'video_id'=>'EngW7tLk6R8',
+                            'type'=>'video',
+                    ],
+                    [
+                        'id'=>1,
+                        'value'=>'covid 19 is airborne',
+                        'type'=>'text',
+            
+            ],
+            
+                
             
               ];
-
+              
               $per_page = $request->input('per_page');
               $page_no = $request->input('page_no');
               if (isset($page_no)) {
@@ -555,25 +558,27 @@ public function login(Request $request){
        
        
         $report =[
-            [
-                'id'=>1,
-                'date'=>'2021-07-21 00:00:00',
-                'device_id'=>'ASD23242342',
-               'test_name'=>'Thyroid Test'
             
-            ],
-            [
-               'id'=>2,
-             'date'=>'2021-07-14 00:00:00',
-             'device_id'=>'FRT654576544',
-            'test_name'=>'Covid Test'
-         ],
+           
            [
                   'id'=>3,
                  'date'=>'2021-07-27 00:00:00',
                  'device_id'=>'RTP6576576',
                 'test_name'=>'asthma test'
             ],
+            [
+                'id'=>2,
+              'date'=>'2021-07-19 00:00:00',
+              'device_id'=>'FRT654576544',
+             'test_name'=>'Covid Test'
+          ],
+          [
+            'id'=>1,
+            'date'=>'2021-07-13 00:00:00',
+            'device_id'=>'ASD23242342',
+           'test_name'=>'Thyroid Test'
+        
+          ],
 
         
           ];
