@@ -417,11 +417,32 @@ public function login(Request $request){
 
    public function notification(Request $request)
     {
-           
+
+        
+        $per_page = $request->input('per_page');
+        $page_no = $request->input('page_no');
+        if (isset($page_no)) {
+          $pageno = $page_no;
+          } else {
+            $pageno = 1;
+          }
+        if (isset($per_page)) {
+          $no_of_records_per_page = $per_page;
+        } else {
+            $no_of_records_per_page = 2;
+        } 
+         $offset = ($pageno-1) * $no_of_records_per_page;
+          
        
-        $notification = DB::table('notification')->select('*')->get();
+        $notification = DB::table('notification')->select('*')->skip($offset)->take($no_of_records_per_page)->get();
+         if(count($notification) <= 0){
+            return apiResponse(false, 201, "notifications not found",$notification);
+         }else{
+
+            return apiResponse(true, 200, "notifications fetched successfully",$notification);
+
+         }
        
-        return apiResponse(true, 200, "notifications fetched successfully",$notification);
     }
 
     public function get_devices(Request $request)
@@ -429,7 +450,12 @@ public function login(Request $request){
         
         $get_devices = DB::table('devices')->select('id','device_id','device_name','created_at','updated_at')->get();
        
-        return apiResponse(true, 200, "devices has been fetched successfully",$get_devices);
+        if(count($get_devices) <= 0){
+
+        return apiResponse(false, 201, "devices not found",$get_devices);
+        }else{
+            return apiResponse(true, 200, "devices has been fetched successfully",$get_devices);  
+        }
     }
 
     public function useful_info(Request $request)
@@ -464,8 +490,31 @@ public function login(Request $request){
                     ]
             
               ];
-       
-        return apiResponse(true, 200, "information fetched successfully",$useful_info);
+
+              $per_page = $request->input('per_page');
+              $page_no = $request->input('page_no');
+              if (isset($page_no)) {
+                $pageno = $page_no;
+                } else {
+                  $pageno = 1;
+                }
+              if (isset($per_page)) {
+                $no_of_records_per_page = $per_page;
+              } else {
+                  $no_of_records_per_page = 2;
+              } 
+               $offset = ($pageno-1) * $no_of_records_per_page;
+                
+              
+              $yourDataArray = array_slice( $useful_info, $offset, $no_of_records_per_page );
+              if(count($yourDataArray) <= 0){
+                return apiResponse(false, 201, "useful information not found",$yourDataArray);
+              }else{
+
+                return apiResponse(true, 200, "useful information fetched successfully",$yourDataArray);
+
+              }
+         
     }
 
     public function view_report(Request $request)
@@ -489,7 +538,7 @@ public function login(Request $request){
              'date'=>'2021-07-14 00:00:00',
              'device_id'=>'FRT654576544',
             ' test_name'=>'Covid Test'
-        ],
+         ],
            [
                   'id'=>3,
                  'date'=>'2021-07-27 00:00:00',
@@ -511,9 +560,31 @@ public function login(Request $request){
 
             $report=$report;
         }
+
+        $per_page = $request->input('per_page');
+        $page_no = $request->input('page_no');
+        if (isset($page_no)) {
+          $pageno = $page_no;
+          } else {
+            $pageno = 1;
+          }
+        if (isset($per_page)) {
+          $no_of_records_per_page = $per_page;
+        } else {
+            $no_of_records_per_page = 2;
+        } 
+         $offset = ($pageno-1) * $no_of_records_per_page;
+          
+         $report = array_slice( $report, $offset, $no_of_records_per_page );
+         if(count($report) <= 0){
+            return apiResponse(false, 201, "Reports not found",$report);
+         }else{
+
+            return apiResponse(true, 200, "Report has been fetched successfully",$report);
+
+         }
        
-       
-        return apiResponse(true, 200, "Report has been fetched successfully",$report);
+      
     }
 
 }
