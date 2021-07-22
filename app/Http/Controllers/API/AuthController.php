@@ -343,7 +343,7 @@ class AuthController extends BaseController
         auth()->user()->tokens()->delete();
 
    
-     return response(['success'=>false,'code'=>200,'message'=>"User successfully logout"]);
+     return response(['success'=>true,'code'=>200,'message'=>"User successfully logout"]);
     }
 
 
