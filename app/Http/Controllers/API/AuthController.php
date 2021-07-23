@@ -644,5 +644,50 @@ public function login(Request $request){
        
       
     }
+    
+
+   public function faq(Request $request)
+   {
+
+       
+       $per_page = $request->input('per_page');
+       $page_no = $request->input('page_no');
+       if (isset($page_no)) {
+         $pageno = $page_no;
+         } else {
+           $pageno = 1;
+         }
+       if (isset($per_page)) {
+         $no_of_records_per_page = $per_page;
+       } else {
+           $no_of_records_per_page = 2;
+       } 
+        $offset = ($pageno-1) * $no_of_records_per_page;
+         
+      
+       $faq = DB::table('faq')->select('*')->orderBy('id', 'desc')->skip($offset)->take($no_of_records_per_page)->get();
+        if(count($faq) <= 0){
+           return apiResponse(false, 201, "faq not found",$faq);
+        }else{
+
+           return apiResponse(true, 200, "faq fetched successfully",$faq);
+
+        }
+      
+   }
+
+   public function tests(Request $request)
+   {
+      
+       $tests = DB::table('tests')->select('*')->orderBy('id', 'desc')->get();
+        if(count($tests) <= 0){
+           return apiResponse(false, 201, "faq not found",$tests);
+        }else{
+
+           return apiResponse(true, 200, "faq fetched successfully",$tests);
+
+        }
+      
+   }
 
 }
