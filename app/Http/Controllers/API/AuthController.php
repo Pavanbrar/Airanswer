@@ -340,7 +340,7 @@ class AuthController extends BaseController
             'username' => $user->username,
             'firstname' => $user->firstname,
             'lastname' => $user->lastname,
-            'dob' => $user->dob,
+            'dob' => date("d-m-Y", strtotime($user->dob) ),
             'phone' => $user->phone,
             'gender'=>$user->gender,
              'email' => $user->email,
@@ -421,7 +421,7 @@ public function login(Request $request){
        'username' => $user->username,
        'firstname' => $user->firstname,
        'lastname' => $user->lastname,
-       'dob' => $user->dob,
+       'dob' => date("d-m-Y", strtotime($user->dob) ),
        'phone' => $user->phone,
        'gender'=>$user->gender,
         'email' => $user->email,
@@ -446,7 +446,7 @@ public function login(Request $request){
         'username' => $user->username,
         'firstname' => $user->firstname,
         'lastname' => $user->lastname,
-        'dob' => $user->dob,
+        'dob' => date("d-m-Y", strtotime($user->dob) ),
         'phone' => $user->phone,
         'gender'=>$user->gender,
          'email' => $user->email,
@@ -484,7 +484,20 @@ public function login(Request $request){
             return apiResponse(false, 201, "notifications not found",$notification);
          }else{
 
-            return apiResponse(true, 200, "notifications fetched successfully",$notification);
+            $response_notification=array();
+            $response_notification_array=array();
+ 
+             foreach ($notification as $key => $value) {
+                 $response_notification['id'] = $value->id;
+                 $response_notification['user_id'] = $value->user_id;
+                 $response_notification['status']  = $value->status;
+                 $response_notification['msg']  = $value->msg;
+                 $response_notification['created_at']=date("d-m-Y H:i:s", strtotime($value->created_at) );
+                 $response_notification['updated_at'] =$value->updated_at;
+                 array_push($response_notification_array, $response_notification);
+             }
+
+            return apiResponse(true, 200, "notifications fetched successfully",$response_notification_array);
 
          }
        
@@ -499,7 +512,19 @@ public function login(Request $request){
 
         return apiResponse(false, 201, "devices not found",$get_devices);
         }else{
-            return apiResponse(true, 200, "devices has been fetched successfully",$get_devices);  
+            
+            $response_devices=array();
+            $response_get_devices_array=array();
+ 
+             foreach ($get_devices as $key => $value) {
+                 $response_devices['id'] = $value->id;
+                 $response_devices['device_id'] = $value->device_id;
+                 $response_devices['device_name']  = $value->device_name;
+                 $response_devices['created_at']=date("d-m-Y H:i:s", strtotime($value->created_at) );
+                 $response_devices['updated_at'] =$value->updated_at;
+                 array_push($response_get_devices_array, $response_devices);
+             }
+            return apiResponse(true, 200, "devices has been fetched successfully",$response_get_devices_array);  
         }
     }
 
@@ -578,19 +603,19 @@ public function login(Request $request){
            
            [
                   'id'=>3,
-                 'date'=>'2021-07-27 00:00:00',
+                 'date'=>'27-07-2021 00:00:00',
                  'device_id'=>'RTP6576576',
                 'test_name'=>'asthma test'
             ],
             [
                 'id'=>2,
-              'date'=>'2021-07-19 00:00:00',
+              'date'=>'14-07-2021 00:00:00',
               'device_id'=>'FRT654576544',
              'test_name'=>'Covid Test'
           ],
           [
             'id'=>1,
-            'date'=>'2021-07-13 00:00:00',
+            'date'=>'13-07-2021 00:00:00',
             'device_id'=>'ASD23242342',
            'test_name'=>'Thyroid Test'
         
@@ -599,16 +624,16 @@ public function login(Request $request){
         
           ];
 
-     if($device_id=='ASD23242342' || $date=='2021-07-21'){
+     if($device_id=='ASD23242342' || $date=='2021-07-13'){
 
-            $reports[]=$report[0];
+            $reports[]=$report[2];
             $report=$reports;
          
         }elseif($device_id=='FRT654576544' || $date=='2021-07-14'){
             $reports[]=$report[1];
             $report=$reports;
         }elseif($device_id=='RTP6576576' || $date=='2021-07-27'){
-            $reports[]=$report[2];
+            $reports[]=$report[0];
             $report=$reports;
         }else{
 
@@ -670,7 +695,18 @@ public function login(Request $request){
            return apiResponse(false, 201, "faq not found",$faq);
         }else{
 
-           return apiResponse(true, 200, "faq fetched successfully",$faq);
+           $response_faq=array();
+           $response_faq_array=array();
+
+            foreach ($faq as $key => $value) {
+                $response_faq['id'] = $value->id;
+                $response_faq['question'] = $value->question;
+                $response_faq['answer']  = $value->answer;
+                $response_faq['created_at']=date("d-m-Y H:i:s", strtotime($value->created_at) );
+                $response_faq['updated_at'] =$value->updated_at;
+                array_push($response_faq_array, $response_faq);
+            }
+           return apiResponse(true, 200, "faq fetched successfully",$response_faq_array);
 
         }
       
@@ -684,7 +720,22 @@ public function login(Request $request){
            return apiResponse(false, 201, "tests not found",$tests);
         }else{
 
-           return apiResponse(true, 200, "tests fetched successfully",$tests);
+           
+             $response_test=array();
+             $response_test_array=array();
+  
+              foreach ($tests as $key => $value) {
+                  $response_test['id'] = $value->id;
+                  $response_test['test'] = $value->test;
+                  $response_test['description']  = $value->description;
+                  $response_test['instructions']  = $value->instructions;
+                  $response_test['created_at']=date("d-m-Y H:i:s", strtotime($value->created_at) );
+                  $response_test['updated_at'] =$value->updated_at;
+                  array_push($response_test_array, $response_test);
+              }
+           
+
+           return apiResponse(true, 200, "tests fetched successfully",$response_test_array);
 
         }
       
