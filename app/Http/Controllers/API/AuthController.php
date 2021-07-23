@@ -19,6 +19,22 @@ class AuthController extends BaseController
         return $this->sendResponse(UserResource::collection($user), 'Posts fetched.');
     }
 
+    public function adminLogin(Request $request)
+    {
+        if(empty($request->input('username'))){
+                return response()->json([
+                    "success" => "false",
+                    "code" => "422",
+                    "message" => 'Please enter valid data'
+                ]);
+        }
+        if(($request->input('username') == 'admin') && ($request->input('password') =='mind@123')){
+            return $this->sendResponse('Successfully', 'Successfully');
+        }else{
+            return $this->sendError('Please enter valid detail', []);
+        }
+    }
+
     public function register(Request $request)
     {
                $validator =  Validator::make($request->all(), [

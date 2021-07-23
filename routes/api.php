@@ -32,6 +32,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     
 });
 
+Route::post('admin-login',[AuthController::class,'adminLogin']);
 Route::post('register',[AuthController::class,'register']);
 Route::post('login',[AuthController::class,'login']);
 Route::post('verify-phone-otp',[AuthController::class,'verifyPhoneOtp']);
