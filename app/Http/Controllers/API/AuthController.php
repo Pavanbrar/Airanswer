@@ -681,10 +681,10 @@ public function login(Request $request){
       
        $tests = DB::table('tests')->select('*')->orderBy('id', 'desc')->get();
         if(count($tests) <= 0){
-           return apiResponse(false, 201, "faq not found",$tests);
+           return apiResponse(false, 201, "tests not found",$tests);
         }else{
 
-           return apiResponse(true, 200, "faq fetched successfully",$tests);
+           return apiResponse(true, 200, "tests fetched successfully",$tests);
 
         }
       
