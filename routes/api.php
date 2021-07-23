@@ -28,7 +28,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('useful_informations',[AuthController::class,'useful_info']); 
     Route::post('reports',[AuthController::class,'view_report']); 
     Route::post('get_user',[AuthController::class,'get_user']); 
-    
+    Route::post('faq',[AuthController::class,'faq']); 
+    Route::post('tests',[AuthController::class,'tests']); 
     
 });
 
