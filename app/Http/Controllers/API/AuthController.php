@@ -604,19 +604,46 @@ public function login(Request $request){
            [
                   'id'=>3,
                  'date'=>'27-07-2021 00:00:00',
-                 'device_id'=>'RTP6576576',
+                 'device'=>[
+
+                    "id"=> 3,
+                    "device_id"=> "RTP6576576",
+                    "device_name"=> "device 3",
+                    "created_at"=> "27-07-2021 00:00:00",
+                    "updated_at"=> null
+
+
+                 ],
                 'test_name'=>'asthma test'
             ],
             [
                 'id'=>2,
               'date'=>'14-07-2021 00:00:00',
-              'device_id'=>'FRT654576544',
+              'device'=>[
+
+                "id"=> 2,
+                "device_id"=> "FRT654576544",
+                "device_name"=> "device 2",
+                "created_at"=> "24-07-2021 00:00:00",
+                "updated_at"=> null
+
+
+             ],
              'test_name'=>'Covid Test'
           ],
           [
             'id'=>1,
             'date'=>'13-07-2021 00:00:00',
-            'device_id'=>'ASD23242342',
+            'device'=>[
+
+                "id"=> 1,
+                "device_id"=> "ASD23242342",
+                "device_name"=> "device 1",
+                "created_at"=> "21-07-2021 00:00:00",
+                "updated_at"=> null
+
+
+             ],
            'test_name'=>'Thyroid Test'
         
           ],
