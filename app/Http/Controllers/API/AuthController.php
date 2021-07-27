@@ -650,23 +650,31 @@ public function login(Request $request){
 
         
           ];
+if($date=='1970-01-011'){ $dates=''; }
+    if($device_id!='' || $dates!='')
+    {     
+       
+        if($device_id=='ASD23242342' || $date=='2021-07-13'){
 
-     if($device_id=='ASD23242342' || $date=='2021-07-13'){
+                $reports[]=$report[2];
+                $report=$reports;
+            
+            }elseif($device_id=='FRT654576544' || $date=='2021-07-14'){
+                $reports[]=$report[1];
+                $report=$reports;
+            }elseif($device_id=='RTP6576576' || $date=='2021-07-27'){
+                $reports[]=$report[0];
+                $report=$reports;
+            }else{
 
-            $reports[]=$report[2];
-            $report=$reports;
-         
-        }elseif($device_id=='FRT654576544' || $date=='2021-07-14'){
-            $reports[]=$report[1];
-            $report=$reports;
-        }elseif($device_id=='RTP6576576' || $date=='2021-07-27'){
-            $reports[]=$report[0];
-            $report=$reports;
-        }else{
+                $report=[];
+            
+            }
+    }else{
+       
+        $report=$report;
 
-            $report=$report;
-        }
-
+    }
         $per_page = $request->input('per_page');
         $page_no = $request->input('page_no');
         if (isset($page_no)) {
