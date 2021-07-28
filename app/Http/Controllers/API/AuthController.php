@@ -385,7 +385,7 @@ class AuthController extends BaseController
     //temporiory apis//
 
 
-    public function login(Request $request)
+    public function login(Request $request){
     if (empty($request->input('phone_or_email_or_username'))) {
         return response()->json([
             'success' =>false,
