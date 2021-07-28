@@ -362,13 +362,32 @@ class AuthController extends BaseController
      return response(['success'=>true,'code'=>200,'message'=>"User successfully logout"]);
     }
 
+    public function getUserId(Request $request)
+    {
+        $user_id=$request->input('user_id');
+        $user_data = DB::table('users')->select('*')->where('id', '=',$user_id)->get();
+        if(count($user_data)>0){
+            return apiResponse(true, 200, "User data feteched",$user_data);
+        }else{
+            return apiResponse(false, 201, "User data not found",$user_data);
+        }
+        
 
+    }   
     //temporiory apis//
 
 
     
 public function login(Request $request){
 
+    if (empty($request->input('phone_or_email_or_username'))) {
+        return response()->json([
+            'success' =>false,
+            'code' =>422,
+            'message' => ' email/phone/username is required'
+        ]);
+        }
+       
     $field = "";
     if (is_numeric($request->input('phone_or_email_or_username'))) {
     $field = "phone";
@@ -382,7 +401,7 @@ public function login(Request $request){
     return response()->json([
         'success' =>false,
         'code' =>422,
-        'message' => 'Phone/email/username field is required'
+        'message' => 'invalid email/phone/username'
     ]);
     }
     if (empty($request->input('password'))) {
