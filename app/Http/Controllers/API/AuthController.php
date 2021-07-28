@@ -372,49 +372,59 @@ class AuthController extends BaseController
 
     public function getUserId(Request $request)
     {
-        $user_id=$request->input('user_id');
-        $user_data = DB::table('users')->select('*')->where('id', '=',$user_id)->get();
-        if(count($user_data)>0){
-            return apiResponse(true, 200, "User data feteched",$user_data);
-        }else{
-            return apiResponse(false, 201, "User data not found",$user_data);
+        $user_id = $request->input('user_id');
+        $user_data = DB::table('users')->select('*')->where('id', '=', $user_id)->get();
+        if (count($user_data) > 0) {
+            return apiResponse(true, 200, "User data feteched", $user_data);
+        } else {
+            return apiResponse(false, 201, "User data not found", $user_data);
         }
-        
-
-    }   
+    }
     //temporiory apis//
 
 
-    public function login(Request $request){
-    if (empty($request->input('phone_or_email_or_username'))) {
-        return response()->json([
-            'success' =>false,
-            'code' =>422,
-            'message' => ' email/phone/username is required'
-        ]);
+    public function login(Request $request)
+    {
+
+        if (empty($request->input('phone_or_email_or_username'))) {
+            return response()->json([
+                'success' => false,
+                'code' => 422,
+                'message' => ' email/phone/username is required'
+            ]);
         }
-       
-    $field = "";
-    if (is_numeric($request->input('phone_or_email_or_username'))) {
-    $field = "phone";
-    } elseif (filter_var($request->input('phone_or_email_or_username'), FILTER_VALIDATE_EMAIL)) {
-    $field = "email";
-    }elseif(ctype_alnum($request->input('phone_or_email_or_username'))){
-        $field = "username";
-    }
-    
-    if (empty($field)) {
-    return response()->json([
-        'success' =>false,
-        'code' =>422,
-        'message' => 'invalid email/phone/username'
-    ]);
-    }
-    if (empty($request->input('password'))) {
-        return response()->json([
-            'success' =>false,
-            'code' =>422,
-            'message' => 'Password field required'
+
+        $field = "";
+        if (is_numeric($request->input('phone_or_email_or_username'))) {
+            $field = "phone";
+        } elseif (filter_var($request->input('phone_or_email_or_username'), FILTER_VALIDATE_EMAIL)) {
+            $field = "email";
+        } elseif (ctype_alnum($request->input('phone_or_email_or_username'))) {
+            $field = "username";
+        }
+
+        if (empty($field)) {
+            return response()->json([
+                'success' => false,
+                'code' => 422,
+                'message' => 'invalid email/phone/username'
+            ]);
+        }
+        if (empty($request->input('password'))) {
+            return response()->json([
+                'success' => false,
+                'code' => 422,
+                'message' => 'Password field required'
+            ]);
+        }
+        $request->merge([$field => $request->input('phone_or_email_or_username')]);
+        // $validator = Validator::make($request->all(), [
+        // $field => 'required|max:60',
+        // 'password' => 'required|max:60',
+        // ]);
+        $fields = $request->validate([
+            $field => 'required|string',
+            'password' => 'required|string',
         ]);
         // if ($validator->fails()) {
         // return response()->json([
@@ -455,8 +465,8 @@ class AuthController extends BaseController
 
         return apiResponse(true, 200, "Logged in successfully", $response);
     }
-
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
         $user = User::find($id);
         $user->update($request->all());
         $response = [
@@ -476,7 +486,8 @@ class AuthController extends BaseController
         return apiResponse(true, 200, "User updated successfully", $response);
     }
 
-    public function getUserbyId($id){
+    public function getUserbyId($id)
+    {
         $user = User::find($id);
         $response = [
             'user_id' => $user->id,
