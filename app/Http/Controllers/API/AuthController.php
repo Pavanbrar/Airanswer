@@ -382,26 +382,34 @@ public function login(Request $request){
     return response()->json([
         'success' =>false,
         'code' =>422,
-        'message' => 'Please enter vald data'
+        'message' => 'Phone/email/username field is required'
     ]);
     }
-    
+    if (empty($request->input('password'))) {
+        return response()->json([
+            'success' =>false,
+            'code' =>422,
+            'message' => 'Password field required'
+        ]);
+        }
     $request->merge([$field => $request->input('phone_or_email_or_username')]);
-    $validator = Validator::make($request->all(), [
-    $field => 'required|max:60',
-    'password' => 'required|max:60',
-    ]);
+    // $validator = Validator::make($request->all(), [
+    // $field => 'required|max:60',
+    // 'password' => 'required|max:60',
+    // ]);
     $fields = $request->validate([
     $field => 'required|string',
     'password' => 'required|string',
     ]);
-    if ($validator->fails()) {
-    return response()->json([
-        'success' => false,
-        'code' => 422,
-        'message' => $validator->errors()
-    ]);
-    }
+    // if ($validator->fails()) {
+    // return response()->json([
+    //     'success' => false,
+    //     'code' => 422,
+    //     'message' => $validator->errors()
+    // ]);
+    // }
+
+   
     //check email
     if($field == 'email'){
     $user = User::where('email',$fields['email'])->first();
