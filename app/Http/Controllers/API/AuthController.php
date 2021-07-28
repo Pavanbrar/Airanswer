@@ -622,7 +622,8 @@ public function login(Request $request){
 
 
                  ],
-                'test_name'=>'asthma test'
+                'test_name'=>'asthma test',
+                "location"=>"india"
             ],
             [
                 'id'=>2,
@@ -637,7 +638,8 @@ public function login(Request $request){
 
 
              ],
-             'test_name'=>'Covid Test'
+             'test_name'=>'Covid Test',
+             "location"=>"america"
           ],
           [
             'id'=>1,
@@ -652,7 +654,8 @@ public function login(Request $request){
 
 
              ],
-           'test_name'=>'Thyroid Test'
+           'test_name'=>'Thyroid Test',
+           "location"=>"south africa"
         
           ],
 
