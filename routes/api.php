@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\FaqController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -41,4 +42,12 @@ Route::post('verify-phone-otp',[AuthController::class,'verifyPhoneOtp']);
 Route::post('resendpin',[AuthController::class,'resendpin']);
 Route::post('forget_password',[AuthController::class,'forget_password']);
 Route::post('reset_password',[AuthController::class,'resetpassword']);
+
+
+//web api routes//
+Route::post('get-user-id',[AuthController::class,'getUserId']);
+Route::delete('faq-delete/{id}',[FaqController::class,'delete']);
+
+
+
 
