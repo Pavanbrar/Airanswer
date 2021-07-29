@@ -390,7 +390,7 @@ class AuthController extends BaseController
             return response()->json([
                 'success' => false,
                 'code' => 422,
-                'message' => ' email/phone/username is required'
+                'message' => ' Email/phone/username is required'
             ]);
         }
 
@@ -407,7 +407,7 @@ class AuthController extends BaseController
             return response()->json([
                 'success' => false,
                 'code' => 422,
-                'message' => 'invalid email/phone/username'
+                'message' => 'Invalid email/phone/username'
             ]);
         }
         if (empty($request->input('password'))) {
@@ -437,15 +437,20 @@ class AuthController extends BaseController
 
         //check email
         if ($field == 'email') {
-            $user = User::where('email', $fields['email'])->first();
+         
+
+        //   User::where('email', $fields['email'])->first();
+           $user =  User::where(DB::raw('BINARY `email`'),$fields['email'])->first();
+           
         } elseif ($field == 'phone') {
             $user = User::where('phone', $fields['phone'])->first();
         } else {
-            $user = User::where('username', $fields['username'])->first();
+          //  $user = User::where('username', $fields['username'])->first();
+            $user =  User::where(DB::raw('BINARY `username`'),$fields['username'])->first();
         }
         //check password
         if (!$user || !Hash::check($fields['password'], $user->password)) {
-            return response(['success' => false, 'code' => 201, 'message' => "Wrong Credentials"]);
+            return response(['success' => false, 'code' => 201, 'message' => "Wrong credentials"]);
         }
         //
         $token = $user->CreateToken('myapptoken')->plainTextToken;
@@ -527,7 +532,7 @@ class AuthController extends BaseController
 
         $notification = DB::table('notification')->select('*')->orderBy('id', 'desc')->skip($offset)->take($no_of_records_per_page)->get();
         if (count($notification) <= 0) {
-            return apiResponse(false, 201, "notifications not found", $notification);
+            return apiResponse(false, 201, "Notifications not found", $notification);
         } else {
 
             $response_notification = array();
@@ -543,7 +548,7 @@ class AuthController extends BaseController
                 array_push($response_notification_array, $response_notification);
             }
 
-            return apiResponse(true, 200, "notifications fetched successfully", $response_notification_array);
+            return apiResponse(true, 200, "Notifications fetched successfully", $response_notification_array);
         }
     }
 
@@ -554,7 +559,7 @@ class AuthController extends BaseController
 
         if (count($get_devices) <= 0) {
 
-            return apiResponse(false, 201, "devices not found", $get_devices);
+            return apiResponse(false, 201, "Devices not found", $get_devices);
         } else {
 
             $response_devices = array();
@@ -568,7 +573,7 @@ class AuthController extends BaseController
                 $response_devices['updated_at'] = $value->updated_at;
                 array_push($response_get_devices_array, $response_devices);
             }
-            return apiResponse(true, 200, "devices has been fetched successfully", $response_get_devices_array);
+            return apiResponse(true, 200, "Devices has been fetched successfully", $response_get_devices_array);
         }
     }
 
@@ -626,10 +631,10 @@ class AuthController extends BaseController
 
         $yourDataArray = array_slice($useful_info, $offset, $no_of_records_per_page);
         if (count($yourDataArray) <= 0) {
-            return apiResponse(false, 201, "useful information not found", $yourDataArray);
+            return apiResponse(false, 201, "Useful information not found", $yourDataArray);
         } else {
 
-            return apiResponse(true, 200, "useful information fetched successfully", $yourDataArray);
+            return apiResponse(true, 200, "Useful information fetched successfully", $yourDataArray);
         }
     }
 
@@ -786,7 +791,7 @@ class AuthController extends BaseController
 
         $faq = DB::table('faq')->select('*')->orderBy('id', 'desc')->skip($offset)->take($no_of_records_per_page)->get();
         if (count($faq) <= 0) {
-            return apiResponse(false, 201, "faq not found", $faq);
+            return apiResponse(false, 201, "Faq not found", $faq);
         } else {
 
             $response_faq = array();
@@ -800,7 +805,7 @@ class AuthController extends BaseController
                 $response_faq['updated_at'] = $value->updated_at;
                 array_push($response_faq_array, $response_faq);
             }
-            return apiResponse(true, 200, "faq fetched successfully", $response_faq_array);
+            return apiResponse(true, 200, "Faq fetched successfully", $response_faq_array);
         }
     }
 
@@ -809,7 +814,7 @@ class AuthController extends BaseController
 
         $tests = DB::table('tests')->select('*')->orderBy('id', 'desc')->get();
         if (count($tests) <= 0) {
-            return apiResponse(false, 201, "tests not found", $tests);
+            return apiResponse(false, 201, "Tests not found", $tests);
         } else {
 
 
@@ -827,7 +832,7 @@ class AuthController extends BaseController
             }
 
 
-            return apiResponse(true, 200, "tests fetched successfully", $response_test_array);
+            return apiResponse(true, 200, "Tests fetched successfully", $response_test_array);
         }
     }
 }
