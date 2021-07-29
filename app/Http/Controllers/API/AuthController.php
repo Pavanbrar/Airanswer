@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\User as UserResource;
 use Mail;
+
 class AuthController extends BaseController
 {
     public function index()
@@ -21,23 +22,23 @@ class AuthController extends BaseController
 
     public function adminLogin(Request $request)
     {
-        if(empty($request->input('username'))){
-                return response()->json([
-                    "success" => "false",
-                    "code" => "422",
-                    "message" => 'Please enter valid data'
-                ]);
+        if (empty($request->input('username'))) {
+            return response()->json([
+                "success" => "false",
+                "code" => "422",
+                "message" => 'Please enter valid data'
+            ]);
         }
-        if(($request->input('username') == 'admin') && ($request->input('password') =='mind@123')){
+        if (($request->input('username') == 'admin') && ($request->input('password') == 'mind@123')) {
             return $this->sendResponse('Successfully', 'Successfully');
-        }else{
+        } else {
             return $this->sendError('Please enter valid detail', []);
         }
     }
 
     public function register(Request $request)
     {
-               $validator =  Validator::make($request->all(), [
+        $validator =  Validator::make($request->all(), [
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
@@ -58,11 +59,11 @@ class AuthController extends BaseController
 
 
         $user = new User;
-        if(!$user_detail = User::where('email',$request->input("email"))->first()){
-            $user_detail = User::where('phone',$request->input("phone"))->first();
+        if (!$user_detail = User::where('email', $request->input("email"))->first()) {
+            $user_detail = User::where('phone', $request->input("phone"))->first();
         }
-        if($user_detail){
-            User::where('id',$user_detail->id)->update(
+        if ($user_detail) {
+            User::where('id', $user_detail->id)->update(
                 array(
                     'firstname' => $request->input("firstname"),
                     'lastname' => $request->input("lastname"),
@@ -74,9 +75,10 @@ class AuthController extends BaseController
                     'gender' => $request->input("gender"),
                     'email' => $request->input("email"),
                     'password' => Hash::make($request->input("password"))
-                ));
-               $user->id =  $user_detail->id;
-        }else{
+                )
+            );
+            $user->id =  $user_detail->id;
+        } else {
             $user->firstname = $request->input("firstname");
             $user->lastname = $request->input("lastname");
             $user->phone = $request->input("phone");
@@ -89,28 +91,28 @@ class AuthController extends BaseController
             $user->password = Hash::make($request->input("password"));
             $user->save();
         }
-           // $verification_otp = rand(1000, 9999); // verification otp
-            $verification_otp = 1234; // verification otp
-            $users_otp = DB::table('otp_verify')->select('*')->where([['user_id', '=', $user->id]])->first();
-            if (!empty($users_otp)) {
-                $update_time = DB::table('otp_verify')
-                                ->where('user_id', $users_otp->user_id)
-                                ->update([
-                                    'user_otp' => $verification_otp, 
-                                    'expire_token' => '0', 
-                                    'created_at' => date('Y-m-d H:i:s')
-                                ]);
-            }else{
-                DB::table('otp_verify')->insert(['user_id' => $user->id, 'user_otp' => $verification_otp, 'expire_token' => '0', 'created_at' => date('Y-m-d H:i:s')]);
-            }
-           
-            //Sent email verfication with pin to users...
-           // emailTemplete($request, $verification_otp);
-            // return apiResponse('true', '200', 'Otp send to your registered email address', $user);
-            $success['token'] =  $user->createToken('api_token')->plainTextToken;
-            $success['user_id'] =  $user->id;
-            return $this->sendResponse($success, 'OTP has been send to your email. Please Verify your account');
-}
+        // $verification_otp = rand(1000, 9999); // verification otp
+        $verification_otp = 1234; // verification otp
+        $users_otp = DB::table('otp_verify')->select('*')->where([['user_id', '=', $user->id]])->first();
+        if (!empty($users_otp)) {
+            $update_time = DB::table('otp_verify')
+                ->where('user_id', $users_otp->user_id)
+                ->update([
+                    'user_otp' => $verification_otp,
+                    'expire_token' => '0',
+                    'created_at' => date('Y-m-d H:i:s')
+                ]);
+        } else {
+            DB::table('otp_verify')->insert(['user_id' => $user->id, 'user_otp' => $verification_otp, 'expire_token' => '0', 'created_at' => date('Y-m-d H:i:s')]);
+        }
+
+        //Sent email verfication with pin to users...
+        // emailTemplete($request, $verification_otp);
+        // return apiResponse('true', '200', 'Otp send to your registered email address', $user);
+        $success['token'] =  $user->createToken('api_token')->plainTextToken;
+        $success['user_id'] =  $user->id;
+        return $this->sendResponse($success, 'OTP has been send to your email. Please Verify your account');
+    }
 
     // public function login(Request $request){
 
@@ -180,11 +182,12 @@ class AuthController extends BaseController
     //             }
     //         }
     //         return $this->sendResponse($response, 'OTP has been send to your phone/email acccount');
-        
+
     // // }
 
-    public function verifyPhoneOtp(Request $request){
-      
+    public function verifyPhoneOtp(Request $request)
+    {
+
         $user_id = $request->user_id;
         $usr_otp = $request->otp;
         $users = User::select('*', 'id')->where([['id', '=', $user_id]])->first();
@@ -213,7 +216,7 @@ class AuthController extends BaseController
                             return $this->sendResponse('Account verified Successfully', 'Successfully');
                         } else {
                             $token = $users->CreateToken('myapptoken')->plainTextToken;
-                            $response =[
+                            $response = [
                                 'user' => $users,
                                 'token' => $token
                             ];
@@ -238,7 +241,8 @@ class AuthController extends BaseController
         }
     }
 
-    public function resendPin(Request $request){
+    public function resendPin(Request $request)
+    {
         $user_id = $request->user_id;
         $getuser = DB::table('users')->select('*')->where([['id', '=', $user_id]])->first();
         if ($getuser) {
@@ -259,575 +263,571 @@ class AuthController extends BaseController
         }
     }
 
-    public function forget_password(Request $request){ 
-        $email= $request->email;
-        $getuser = DB::table('users')->select('*')->where([['email', '=',$email]])->first();
-        if($getuser){
-            $userId=$getuser->id;
-          //  $verification_otp = rand(1000,9999);
-            $verification_otp =1234;
-           $update_otp = DB::table('otp_verify')
-            ->where('user_id', $userId)
-            ->update([
-                'user_otp' => $verification_otp,
-                'expire_token' => '0',
-                'created_at' => date('Y-m-d H:i:s'),
-            ]);
-        // Email
+    public function forget_password(Request $request)
+    {
+        $email = $request->email;
+        $getuser = DB::table('users')->select('*')->where([['email', '=', $email]])->first();
+        if ($getuser) {
+            $userId = $getuser->id;
+            //  $verification_otp = rand(1000,9999);
+            $verification_otp = 1234;
+            $update_otp = DB::table('otp_verify')
+                ->where('user_id', $userId)
+                ->update([
+                    'user_otp' => $verification_otp,
+                    'expire_token' => '0',
+                    'created_at' => date('Y-m-d H:i:s'),
+                ]);
+            // Email
 
-            emailTemplete($request,$verification_otp);
-          return $this->sendResponse([],'PIN sent to Email Address');
-    }else{
-        return $this->sendError('User does not matched');
+            emailTemplete($request, $verification_otp);
+            return $this->sendResponse([], 'PIN sent to Email Address');
+        } else {
+            return $this->sendError('User does not matched');
+        }
     }
-  }
 
-    public function resetpassword(Request $request){
+    public function resetpassword(Request $request)
+    {
         $user_otp = $request->otp;
         $new_password = $request->new_password;
         $email = $request->email;
-        $checkotp = DB::table('otp_verify')->select('*')->where([['user_otp', '=',$user_otp]])->first();
-        if($checkotp){
-            $user_id=$checkotp->user_id;
-            if($new_password!=''){
-                $getemail = DB::table('users')->select('email')->where([['email', '=',$email]])->first();
-                if($getemail){
-                        $userpass = DB::table('users')->select('password')->where([['id', '=',$user_id]])->first();
-                        if(Hash::check($new_password, $userpass->password)){
-                            return $this->sendError('User new password is same as the old password. Please enter a different password');
-                        }
-                        $created_at=strtotime("+10 minutes",strtotime($checkotp->created_at));
-                        $current_date = strtotime(date('Y-m-d H:i:s'));
-                        if($created_at > $current_date){              
-                            $user_email=$getemail->email;
-                            $update_password = DB::table('users')
-                                ->where('email', $user_email)
-                                ->update([
-                                    'password' => bcrypt($new_password)                        
-                                ]);
-                            return $this->sendResponse('Password Changed Successfully',[]);
-                        }else{
-                                $update_time = DB::table('otp_verify')
-                                ->where('user_id', $checkotp->user_id)
-                                ->update([
-                                    'expire_token' =>0
-                                ]);
-                                return $this->sendError('PIN expired');
-                        } 
-                }else{
+        $checkotp = DB::table('otp_verify')->select('*')->where([['user_otp', '=', $user_otp]])->first();
+        if ($checkotp) {
+            $user_id = $checkotp->user_id;
+            if ($new_password != '') {
+                $getemail = DB::table('users')->select('email')->where([['email', '=', $email]])->first();
+                if ($getemail) {
+                    $userpass = DB::table('users')->select('password')->where([['id', '=', $user_id]])->first();
+                    if (Hash::check($new_password, $userpass->password)) {
+                        return $this->sendError('User new password is same as the old password. Please enter a different password');
+                    }
+                    $created_at = strtotime("+10 minutes", strtotime($checkotp->created_at));
+                    $current_date = strtotime(date('Y-m-d H:i:s'));
+                    if ($created_at > $current_date) {
+                        $user_email = $getemail->email;
+                        $update_password = DB::table('users')
+                            ->where('email', $user_email)
+                            ->update([
+                                'password' => bcrypt($new_password)
+                            ]);
+                        return $this->sendResponse('Password Changed Successfully', []);
+                    } else {
+                        $update_time = DB::table('otp_verify')
+                            ->where('user_id', $checkotp->user_id)
+                            ->update([
+                                'expire_token' => 0
+                            ]);
+                        return $this->sendError('PIN expired');
+                    }
+                } else {
                     return $this->sendError('Email Address is not matched');
                 }
-            }else{
+            } else {
                 return $this->sendError('Password is required');
-                }
-        }else{
+            }
+        } else {
             return $this->sendError('PIN not matched');
         }
     }
 
-    public function me(Request $request){
-     
-        $user=$request->user();
-        return apiResponse(true, 200, "User data feteched",$user);
+    public function me(Request $request)
+    {
+
+        $user = $request->user();
+        return apiResponse(true, 200, "User data feteched", $user);
     }
 
 
-    public function get_user(Request $request){
-     
-        $user=$request->user();
-        $response =[
+    public function get_user(Request $request)
+    {
+
+        $user = $request->user();
+        $response = [
             'user_id' => $user->id,
             'username' => $user->username,
             'firstname' => $user->firstname,
             'lastname' => $user->lastname,
-            'dob' => date("d-m-Y", strtotime($user->dob) ),
+            'dob' => date("d-m-Y", strtotime($user->dob)),
             'phone' => $user->phone,
-            'gender'=>$user->gender,
-             'email' => $user->email,
-             'company_name' => $user->company_name,
-             'status'=>$user->status,
-             'device_type'=>$user->device_type,
-             'device_token'=>$user->device_token,
-         ];
-        return apiResponse(true, 200, "User data feteched",$response);
+            'gender' => $user->gender,
+            'email' => $user->email,
+            'company_name' => $user->company_name,
+            'status' => $user->status,
+            'device_type' => $user->device_type,
+            'device_token' => $user->device_token,
+        ];
+        return apiResponse(true, 200, "User data feteched", $response);
     }
-   
+
 
     public function logout(Request $request)
     {
-        
+
         auth()->user()->tokens()->delete();
 
-   
-     return response(['success'=>true,'code'=>200,'message'=>"User successfully logout"]);
+
+        return response(['success' => true, 'code' => 200, 'message' => "User successfully logout"]);
     }
 
     public function getUserId(Request $request)
     {
-        $user_id=$request->input('user_id');
-        $user_data = DB::table('users')->select('*')->where('id', '=',$user_id)->get();
-        if(count($user_data)>0){
-            return apiResponse(true, 200, "User data feteched",$user_data);
-        }else{
-            return apiResponse(false, 201, "User data not found",$user_data);
+        $user_id = $request->input('user_id');
+        $user_data = DB::table('users')->select('*')->where('id', '=', $user_id)->get();
+        if (count($user_data) > 0) {
+            return apiResponse(true, 200, "User data feteched", $user_data);
+        } else {
+            return apiResponse(false, 201, "User data not found", $user_data);
         }
-        
-
-    }   
+    }
     //temporiory apis//
 
 
-    
-public function login(Request $request){
-
-    if (empty($request->input('phone_or_email_or_username'))) {
-        return response()->json([
-            'success' =>false,
-            'code' =>422,
-            'message' => ' email/phone/username is required'
-        ]);
-        }
-       
-    $field = "";
-    if (is_numeric($request->input('phone_or_email_or_username'))) {
-    $field = "phone";
-    } elseif (filter_var($request->input('phone_or_email_or_username'), FILTER_VALIDATE_EMAIL)) {
-    $field = "email";
-    }elseif(ctype_alnum($request->input('phone_or_email_or_username'))){
-        $field = "username";
-    }
-    
-    if (empty($field)) {
-    return response()->json([
-        'success' =>false,
-        'code' =>422,
-        'message' => 'invalid email/phone/username'
-    ]);
-    }
-    if (empty($request->input('password'))) {
-        return response()->json([
-            'success' =>false,
-            'code' =>422,
-            'message' => 'Password field required'
-        ]);
-        }
-    $request->merge([$field => $request->input('phone_or_email_or_username')]);
-    // $validator = Validator::make($request->all(), [
-    // $field => 'required|max:60',
-    // 'password' => 'required|max:60',
-    // ]);
-    $fields = $request->validate([
-    $field => 'required|string',
-    'password' => 'required|string',
-    ]);
-    // if ($validator->fails()) {
-    // return response()->json([
-    //     'success' => false,
-    //     'code' => 422,
-    //     'message' => $validator->errors()
-    // ]);
-    // }
-
-   
-    //check email
-    if($field == 'email'){
-    $user = User::where('email',$fields['email'])->first();
-    }elseif($field == 'phone'){
-    $user = User::where('phone',$fields['phone'])->first();
-    }else{
-     $user = User::where('username',$fields['username'])->first();  
-    }
-    //check password
-    if(!$user || !Hash::check($fields['password'],$user->password)){
-        return response(['success'=>false, 'code'=>201, 'message'=>"Wrong Credentials"]);
-    }
-    //
-    $token = $user->CreateToken('myapptoken')->plainTextToken;
-    $response =[
-       'user_id' => $user->id,
-       'username' => $user->username,
-       'firstname' => $user->firstname,
-       'lastname' => $user->lastname,
-       'dob' => date("d-m-Y", strtotime($user->dob) ),
-       'phone' => $user->phone,
-       'gender'=>$user->gender,
-        'email' => $user->email,
-        'company_name' => $user->company_name,
-        'token' => $token
-    ];
-    
-    
-    return apiResponse(true, 200, "Logged in successfully",$response);
-    
-    }
-
-     public function update(Request $request, $id)
-    {
-       
-      $user= User::find($id);
-      
-      $user->update($request->all());
-      
-      $response =[
-        'user_id' => $user->id,
-        'username' => $user->username,
-        'firstname' => $user->firstname,
-        'lastname' => $user->lastname,
-        'dob' => date("d-m-Y", strtotime($user->dob) ),
-        'phone' => $user->phone,
-        'gender'=>$user->gender,
-         'email' => $user->email,
-         'company_name' => $user->company_name,
-         'status'=>$user->status,
-         'device_type'=>$user->device_type,
-         'device_token'=>$user->device_token,
-     ];
-
-      return apiResponse(true, 200, "User updated successfully",$response);
-    }
-
-
-   public function notification(Request $request)
+    public function login(Request $request)
     {
 
-        
+        if (empty($request->input('phone_or_email_or_username'))) {
+            return response()->json([
+                'success' => false,
+                'code' => 422,
+                'message' => ' email/phone/username is required'
+            ]);
+        }
+
+        $field = "";
+        if (is_numeric($request->input('phone_or_email_or_username'))) {
+            $field = "phone";
+        } elseif (filter_var($request->input('phone_or_email_or_username'), FILTER_VALIDATE_EMAIL)) {
+            $field = "email";
+        } elseif (ctype_alnum($request->input('phone_or_email_or_username'))) {
+            $field = "username";
+        }
+
+        if (empty($field)) {
+            return response()->json([
+                'success' => false,
+                'code' => 422,
+                'message' => 'invalid email/phone/username'
+            ]);
+        }
+        if (empty($request->input('password'))) {
+            return response()->json([
+                'success' => false,
+                'code' => 422,
+                'message' => 'Password field required'
+            ]);
+        }
+        $request->merge([$field => $request->input('phone_or_email_or_username')]);
+        // $validator = Validator::make($request->all(), [
+        // $field => 'required|max:60',
+        // 'password' => 'required|max:60',
+        // ]);
+        $fields = $request->validate([
+            $field => 'required|string',
+            'password' => 'required|string',
+        ]);
+        // if ($validator->fails()) {
+        // return response()->json([
+        //     'success' => false,
+        //     'code' => 422,
+        //     'message' => $validator->errors()
+        // ]);
+        // }
+
+
+        //check email
+        if ($field == 'email') {
+            $user = User::where('email', $fields['email'])->first();
+        } elseif ($field == 'phone') {
+            $user = User::where('phone', $fields['phone'])->first();
+        } else {
+            $user = User::where('username', $fields['username'])->first();
+        }
+        //check password
+        if (!$user || !Hash::check($fields['password'], $user->password)) {
+            return response(['success' => false, 'code' => 201, 'message' => "Wrong Credentials"]);
+        }
+        //
+        $token = $user->CreateToken('myapptoken')->plainTextToken;
+        $response = [
+            'user_id' => $user->id,
+            'username' => $user->username,
+            'firstname' => $user->firstname,
+            'lastname' => $user->lastname,
+            'dob' => date("d-m-Y", strtotime($user->dob)),
+            'phone' => $user->phone,
+            'gender' => $user->gender,
+            'email' => $user->email,
+            'company_name' => $user->company_name,
+            'token' => $token
+        ];
+
+
+        return apiResponse(true, 200, "Logged in successfully", $response);
+    }
+    public function update(Request $request, $id)
+    {
+        $user = User::find($id);
+        $user->update($request->all());
+        $response = [
+            'user_id' => $user->id,
+            'username' => $user->username,
+            'firstname' => $user->firstname,
+            'lastname' => $user->lastname,
+            'dob' => date("d-m-Y", strtotime($user->dob)),
+            'phone' => $user->phone,
+            'gender' => $user->gender,
+            'email' => $user->email,
+            'company_name' => $user->company_name,
+            'status' => $user->status,
+            'device_type' => $user->device_type,
+            'device_token' => $user->device_token,
+        ];
+        return apiResponse(true, 200, "User updated successfully", $response);
+    }
+
+    public function getUserbyId($id)
+    {
+        $user = User::find($id);
+        $response = [
+            'user_id' => $user->id,
+            'username' => $user->username,
+            'firstname' => $user->firstname,
+            'lastname' => $user->lastname,
+            'dob' => date("d-m-Y", strtotime($user->dob)),
+            'phone' => $user->phone,
+            'gender' => $user->gender,
+            'email' => $user->email,
+            'company_name' => $user->company_name,
+            'status' => $user->status,
+            'device_type' => $user->device_type,
+            'device_token' => $user->device_token,
+        ];
+        return apiResponse(true, 200, "Get User data successfully", $response);
+    }
+
+    public function notification(Request $request)
+    {
+
+
         $per_page = $request->input('per_page');
         $page_no = $request->input('page_no');
         if (isset($page_no)) {
-          $pageno = $page_no;
-          } else {
+            $pageno = $page_no;
+        } else {
             $pageno = 1;
-          }
+        }
         if (isset($per_page)) {
-          $no_of_records_per_page = $per_page;
+            $no_of_records_per_page = $per_page;
         } else {
             $no_of_records_per_page = 2;
-        } 
-         $offset = ($pageno-1) * $no_of_records_per_page;
-          
-       
+        }
+        $offset = ($pageno - 1) * $no_of_records_per_page;
+
+
         $notification = DB::table('notification')->select('*')->orderBy('id', 'desc')->skip($offset)->take($no_of_records_per_page)->get();
-         if(count($notification) <= 0){
-            return apiResponse(false, 201, "notifications not found",$notification);
-         }else{
+        if (count($notification) <= 0) {
+            return apiResponse(false, 201, "notifications not found", $notification);
+        } else {
 
-            $response_notification=array();
-            $response_notification_array=array();
- 
-             foreach ($notification as $key => $value) {
-                 $response_notification['id'] = $value->id;
-                 $response_notification['user_id'] = $value->user_id;
-                 $response_notification['status']  = $value->status;
-                 $response_notification['msg']  = $value->msg;
-                 $response_notification['created_at']=date("d-m-Y H:i:s", strtotime($value->created_at) );
-                 $response_notification['updated_at'] =$value->updated_at;
-                 array_push($response_notification_array, $response_notification);
-             }
+            $response_notification = array();
+            $response_notification_array = array();
 
-            return apiResponse(true, 200, "notifications fetched successfully",$response_notification_array);
+            foreach ($notification as $key => $value) {
+                $response_notification['id'] = $value->id;
+                $response_notification['user_id'] = $value->user_id;
+                $response_notification['status']  = $value->status;
+                $response_notification['msg']  = $value->msg;
+                $response_notification['created_at'] = date("d-m-Y H:i:s", strtotime($value->created_at));
+                $response_notification['updated_at'] = $value->updated_at;
+                array_push($response_notification_array, $response_notification);
+            }
 
-         }
-       
+            return apiResponse(true, 200, "notifications fetched successfully", $response_notification_array);
+        }
     }
 
     public function get_devices(Request $request)
     {
-        
-        $get_devices = DB::table('devices')->select('id','device_id','device_name','created_at','updated_at')->orderBy('id', 'desc')->get();
-       
-        if(count($get_devices) <= 0){
 
-        return apiResponse(false, 201, "devices not found",$get_devices);
-        }else{
-            
-            $response_devices=array();
-            $response_get_devices_array=array();
- 
-             foreach ($get_devices as $key => $value) {
-                 $response_devices['id'] = $value->id;
-                 $response_devices['device_id'] = $value->device_id;
-                 $response_devices['device_name']  = $value->device_name;
-                 $response_devices['created_at']=date("d-m-Y H:i:s", strtotime($value->created_at) );
-                 $response_devices['updated_at'] =$value->updated_at;
-                 array_push($response_get_devices_array, $response_devices);
-             }
-            return apiResponse(true, 200, "devices has been fetched successfully",$response_get_devices_array);  
+        $get_devices = DB::table('devices')->select('id', 'device_id', 'device_name', 'created_at', 'updated_at')->orderBy('id', 'desc')->get();
+
+        if (count($get_devices) <= 0) {
+
+            return apiResponse(false, 201, "devices not found", $get_devices);
+        } else {
+
+            $response_devices = array();
+            $response_get_devices_array = array();
+
+            foreach ($get_devices as $key => $value) {
+                $response_devices['id'] = $value->id;
+                $response_devices['device_id'] = $value->device_id;
+                $response_devices['device_name']  = $value->device_name;
+                $response_devices['created_at'] = date("d-m-Y H:i:s", strtotime($value->created_at));
+                $response_devices['updated_at'] = $value->updated_at;
+                array_push($response_get_devices_array, $response_devices);
+            }
+            return apiResponse(true, 200, "devices has been fetched successfully", $response_get_devices_array);
         }
     }
 
     public function useful_info(Request $request)
     {
-        
-        $useful_info =[
-               
 
-                    [  
-                        
-                        'id'=>4,
-                        'value'=>'covid-19',
-                        'url'=>'https://www.youtube.com/watch?v=i0ZabxXmH4Y',
-                        'video_id'=>'i0ZabxXmH4Y',
-                        'type'=>'video',
-                    ],
-                    [
-                        'id'=>3,
-                     'value'=>'covid 19 is airborne',
-                     'type'=>'text',
-                ],
-                [        'id'=>2,
-                            'value'=>'demo video',
-                            'url'=>'https://youtube.com/watch?v=EngW7tLk6R8',
-                            'video_id'=>'EngW7tLk6R8',
-                            'type'=>'video',
-                    ],
-                    [
-                        'id'=>1,
-                        'value'=>'covid 19 is airborne',
-                        'type'=>'text',
-            
+        $useful_info = [
+
+
+            [
+
+                'id' => 4,
+                'value' => 'covid-19',
+                'url' => 'https://www.youtube.com/watch?v=i0ZabxXmH4Y',
+                'video_id' => 'i0ZabxXmH4Y',
+                'type' => 'video',
             ],
-            
-                
-            
-              ];
-              
-              $per_page = $request->input('per_page');
-              $page_no = $request->input('page_no');
-              if (isset($page_no)) {
-                $pageno = $page_no;
-                } else {
-                  $pageno = 1;
-                }
-              if (isset($per_page)) {
-                $no_of_records_per_page = $per_page;
-              } else {
-                  $no_of_records_per_page = 2;
-              } 
-               $offset = ($pageno-1) * $no_of_records_per_page;
-                
-              
-              $yourDataArray = array_slice( $useful_info, $offset, $no_of_records_per_page );
-              if(count($yourDataArray) <= 0){
-                return apiResponse(false, 201, "useful information not found",$yourDataArray);
-              }else{
+            [
+                'id' => 3,
+                'value' => 'covid 19 is airborne',
+                'type' => 'text',
+            ],
+            [
+                'id' => 2,
+                'value' => 'demo video',
+                'url' => 'https://youtube.com/watch?v=EngW7tLk6R8',
+                'video_id' => 'EngW7tLk6R8',
+                'type' => 'video',
+            ],
+            [
+                'id' => 1,
+                'value' => 'covid 19 is airborne',
+                'type' => 'text',
 
-                return apiResponse(true, 200, "useful information fetched successfully",$yourDataArray);
+            ],
 
-              }
-         
+
+
+        ];
+
+        $per_page = $request->input('per_page');
+        $page_no = $request->input('page_no');
+        if (isset($page_no)) {
+            $pageno = $page_no;
+        } else {
+            $pageno = 1;
+        }
+        if (isset($per_page)) {
+            $no_of_records_per_page = $per_page;
+        } else {
+            $no_of_records_per_page = 2;
+        }
+        $offset = ($pageno - 1) * $no_of_records_per_page;
+
+
+        $yourDataArray = array_slice($useful_info, $offset, $no_of_records_per_page);
+        if (count($yourDataArray) <= 0) {
+            return apiResponse(false, 201, "useful information not found", $yourDataArray);
+        } else {
+
+            return apiResponse(true, 200, "useful information fetched successfully", $yourDataArray);
+        }
     }
 
     public function view_report(Request $request)
     {
 
         $device_id = $request->input('device_id');
-        $dates= $request->input('date');
-        $date =date('Y-m-d', strtotime($dates));
-       
-       
-        $report =[
-            
-           
-           [
-                  'id'=>3,
-                 'date'=>'27-07-2021 00:00:00',
-                 'device'=>[
-
-                    "id"=> 3,
-                    "device_id"=> "RTP6576576",
-                    "device_name"=> "device 3",
-                    "created_at"=> "27-07-2021 00:00:00",
-                    "updated_at"=> null
+        $dates = $request->input('date');
+        $date = date('Y-m-d', strtotime($dates));
 
 
-                 ],
-                'test_name'=>'asthma test',
-                "location"=>"india"
+        $report = [
+
+
+            [
+                'id' => 3,
+                'date' => '27-07-2021 00:00:00',
+                'device' => [
+
+                    "id" => 3,
+                    "device_id" => "RTP6576576",
+                    "device_name" => "device 3",
+                    "created_at" => "27-07-2021 00:00:00",
+                    "updated_at" => null
+
+
+                ],
+                'test_name' => 'asthma test',
+                "location" => "india"
             ],
             [
-                'id'=>2,
-              'date'=>'14-07-2021 00:00:00',
-              'device'=>[
+                'id' => 2,
+                'date' => '14-07-2021 00:00:00',
+                'device' => [
 
-                "id"=> 2,
-                "device_id"=> "FRT654576544",
-                "device_name"=> "device 2",
-                "created_at"=> "24-07-2021 00:00:00",
-                "updated_at"=> null
-
-
-             ],
-             'test_name'=>'Covid Test',
-             "location"=>"america"
-          ],
-          [
-            'id'=>1,
-            'date'=>'13-07-2021 00:00:00',
-            'device'=>[
-
-                "id"=> 1,
-                "device_id"=> "ASD23242342",
-                "device_name"=> "device 1",
-                "created_at"=> "21-07-2021 00:00:00",
-                "updated_at"=> null
+                    "id" => 2,
+                    "device_id" => "FRT654576544",
+                    "device_name" => "device 2",
+                    "created_at" => "24-07-2021 00:00:00",
+                    "updated_at" => null
 
 
-             ],
-           'test_name'=>'Thyroid Test',
-           "location"=>"south africa"
-        
-          ],
+                ],
+                'test_name' => 'Covid Test',
+                "location" => "america"
+            ],
+            [
+                'id' => 1,
+                'date' => '13-07-2021 00:00:00',
+                'device' => [
 
-        
-          ];
-if($date=='1970-01-011'){ $dates=''; }
-    if($device_id!='' && $dates!='')
-    {     
-       
-        
-        if($device_id=='ASD23242342' && $date=='2021-07-13'){
+                    "id" => 1,
+                    "device_id" => "ASD23242342",
+                    "device_name" => "device 1",
+                    "created_at" => "21-07-2021 00:00:00",
+                    "updated_at" => null
 
-                $reports[]=$report[2];
-                $report=$reports;
-            
-            }elseif($device_id=='FRT654576544' && $date=='2021-07-14'){
-                $reports[]=$report[1];
-                $report=$reports;
-            }elseif($device_id=='RTP6576576' && $date=='2021-07-27'){
-                $reports[]=$report[0];
-                $report=$reports;
-            }else{
 
-                $report=[];
-            
+                ],
+                'test_name' => 'Thyroid Test',
+                "location" => "south africa"
+
+            ],
+
+
+        ];
+        if ($date == '1970-01-011') {
+            $dates = '';
+        }
+        if ($device_id != '' && $dates != '') {
+
+
+            if ($device_id == 'ASD23242342' && $date == '2021-07-13') {
+
+                $reports[] = $report[2];
+                $report = $reports;
+            } elseif ($device_id == 'FRT654576544' && $date == '2021-07-14') {
+                $reports[] = $report[1];
+                $report = $reports;
+            } elseif ($device_id == 'RTP6576576' && $date == '2021-07-27') {
+                $reports[] = $report[0];
+                $report = $reports;
+            } else {
+
+                $report = [];
             }
-    }elseif($device_id!='' ||  $dates!='')
-    {
-        
-        if($device_id=='ASD23242342' || $date=='2021-07-13'){
+        } elseif ($device_id != '' ||  $dates != '') {
 
-            $reports[]=$report[2];
-            $report=$reports;
-        
-        }elseif($device_id=='FRT654576544' || $date=='2021-07-14'){
-            $reports[]=$report[1];
-            $report=$reports;
-        }elseif($device_id=='RTP6576576' || $date=='2021-07-27'){
-            $reports[]=$report[0];
-            $report=$reports;
-        }else{
+            if ($device_id == 'ASD23242342' || $date == '2021-07-13') {
 
-            $report=[];
-        
+                $reports[] = $report[2];
+                $report = $reports;
+            } elseif ($device_id == 'FRT654576544' || $date == '2021-07-14') {
+                $reports[] = $report[1];
+                $report = $reports;
+            } elseif ($device_id == 'RTP6576576' || $date == '2021-07-27') {
+                $reports[] = $report[0];
+                $report = $reports;
+            } else {
+
+                $report = [];
+            }
+        } else {
+
+            $report = $report;
         }
 
 
-    }else{
-       
-        $report=$report;
-
-    }
-
-    
         $per_page = $request->input('per_page');
         $page_no = $request->input('page_no');
         if (isset($page_no)) {
-          $pageno = $page_no;
-          } else {
+            $pageno = $page_no;
+        } else {
             $pageno = 1;
-          }
+        }
         if (isset($per_page)) {
-          $no_of_records_per_page = $per_page;
+            $no_of_records_per_page = $per_page;
         } else {
             $no_of_records_per_page = 2;
-        } 
-         $offset = ($pageno-1) * $no_of_records_per_page;
-          if($per_page=='' && $page_no==''){
+        }
+        $offset = ($pageno - 1) * $no_of_records_per_page;
+        if ($per_page == '' && $page_no == '') {
             $report_array = $report;
-          
-          }else{
-         $report_array = array_slice( $report, $offset, $no_of_records_per_page );
-          }
-         if(count($report_array) <= 0){
-            return apiResponse(false, 201, "Reports not found",$report_array);
-         }else{
+        } else {
+            $report_array = array_slice($report, $offset, $no_of_records_per_page);
+        }
+        if (count($report_array) <= 0) {
+            return apiResponse(false, 201, "Reports not found", $report_array);
+        } else {
 
-            return apiResponse(true, 200, "Report has been fetched successfully",$report_array);
-
-         }
-       
-      
+            return apiResponse(true, 200, "Report has been fetched successfully", $report_array);
+        }
     }
-    
 
-   public function faq(Request $request)
-   {
 
-       
-       $per_page = $request->input('per_page');
-       $page_no = $request->input('page_no');
-       if (isset($page_no)) {
-         $pageno = $page_no;
-         } else {
-           $pageno = 1;
-         }
-       if (isset($per_page)) {
-         $no_of_records_per_page = $per_page;
-       } else {
-           $no_of_records_per_page = 2;
-       } 
-        $offset = ($pageno-1) * $no_of_records_per_page;
-         
-      
-       $faq = DB::table('faq')->select('*')->orderBy('id', 'desc')->skip($offset)->take($no_of_records_per_page)->get();
-        if(count($faq) <= 0){
-           return apiResponse(false, 201, "faq not found",$faq);
-        }else{
+    public function faq(Request $request)
+    {
 
-           $response_faq=array();
-           $response_faq_array=array();
+
+        $per_page = $request->input('per_page');
+        $page_no = $request->input('page_no');
+        if (isset($page_no)) {
+            $pageno = $page_no;
+        } else {
+            $pageno = 1;
+        }
+        if (isset($per_page)) {
+            $no_of_records_per_page = $per_page;
+        } else {
+            $no_of_records_per_page = 2;
+        }
+        $offset = ($pageno - 1) * $no_of_records_per_page;
+
+
+        $faq = DB::table('faq')->select('*')->orderBy('id', 'desc')->skip($offset)->take($no_of_records_per_page)->get();
+        if (count($faq) <= 0) {
+            return apiResponse(false, 201, "faq not found", $faq);
+        } else {
+
+            $response_faq = array();
+            $response_faq_array = array();
 
             foreach ($faq as $key => $value) {
                 $response_faq['id'] = $value->id;
                 $response_faq['question'] = $value->question;
                 $response_faq['answer']  = $value->answer;
-                $response_faq['created_at']=date("d-m-Y H:i:s", strtotime($value->created_at) );
-                $response_faq['updated_at'] =$value->updated_at;
+                $response_faq['created_at'] = date("d-m-Y H:i:s", strtotime($value->created_at));
+                $response_faq['updated_at'] = $value->updated_at;
                 array_push($response_faq_array, $response_faq);
             }
-           return apiResponse(true, 200, "faq fetched successfully",$response_faq_array);
-
+            return apiResponse(true, 200, "faq fetched successfully", $response_faq_array);
         }
-      
-   }
+    }
 
-   public function tests(Request $request)
-   {
-      
-       $tests = DB::table('tests')->select('*')->orderBy('id', 'desc')->get();
-        if(count($tests) <= 0){
-           return apiResponse(false, 201, "tests not found",$tests);
-        }else{
+    public function tests(Request $request)
+    {
 
-           
-             $response_test=array();
-             $response_test_array=array();
-  
-              foreach ($tests as $key => $value) {
-                  $response_test['id'] = $value->id;
-                  $response_test['test'] = $value->test;
-                  $response_test['description']  = $value->description;
-                  $response_test['instructions']  = $value->instructions;
-                  $response_test['created_at']=date("d-m-Y H:i:s", strtotime($value->created_at) );
-                  $response_test['updated_at'] =$value->updated_at;
-                  array_push($response_test_array, $response_test);
-              }
-           
+        $tests = DB::table('tests')->select('*')->orderBy('id', 'desc')->get();
+        if (count($tests) <= 0) {
+            return apiResponse(false, 201, "tests not found", $tests);
+        } else {
 
-           return apiResponse(true, 200, "tests fetched successfully",$response_test_array);
 
+            $response_test = array();
+            $response_test_array = array();
+
+            foreach ($tests as $key => $value) {
+                $response_test['id'] = $value->id;
+                $response_test['test'] = $value->test;
+                $response_test['description']  = $value->description;
+                $response_test['instructions']  = $value->instructions;
+                $response_test['created_at'] = date("d-m-Y H:i:s", strtotime($value->created_at));
+                $response_test['updated_at'] = $value->updated_at;
+                array_push($response_test_array, $response_test);
+            }
+
+
+            return apiResponse(true, 200, "tests fetched successfully", $response_test_array);
         }
-      
-   }
-
+    }
 }
