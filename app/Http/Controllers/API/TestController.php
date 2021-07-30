@@ -35,6 +35,23 @@ class TestController extends BaseController
         }
     }
 
+    public function getTestId(Request $request,$id)
+    {
+      
+        $test_data = DB::table('tests')->select('*')->where('id', '=', $id)->get();
+        if (count($test_data) > 0) {
+            return apiResponse(true, 200, "Faq data feteched", $test_data);
+        } else {
+            return apiResponse(false, 201, "Faq data not found", $test_data);
+        }
+    }
+
+    public function testAll(Request $request)
+    {
+        $test = Test::all();
+        return apiResponse(true, 200, "data fetch successfully",$test);
+    }
+
     public function delete($id)
     {
        $testDelete = Test::find($id);

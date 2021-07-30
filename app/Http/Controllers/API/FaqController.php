@@ -33,6 +33,23 @@ class FaqController extends BaseController
         }
     }
 
+    public function getFaqId(Request $request,$id)
+    {
+      
+        $faq_data = DB::table('faq')->select('*')->where('id', '=', $id)->get();
+        if (count($faq_data) > 0) {
+            return apiResponse(true, 200, "Faq data feteched", $faq_data);
+        } else {
+            return apiResponse(false, 201, "Faq data not found", $faq_data);
+        }
+    }
+
+    public function faqAll(Request $request)
+    {
+        $faq = Faq::all();
+        return apiResponse(true, 200, "data fetch successfully",$faq);
+    }
+
     public function delete($id)
     {
       
