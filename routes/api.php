@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\FaqController;
 use App\Http\Controllers\API\TestController;
+use App\Http\Controllers\API\NotificationController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -49,6 +50,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('test-update/{id}',[TestController::class,'update']);
     Route::get('get-test-id/{id}',[TestController::class,'getTestId']);
     Route::get('test-all',[TestController::class,'testAll']);
+
+    //notification api//
+    
+    Route::post('start-test',[NotificationController::class,'startTest']); 
+    Route::post('ongoing-test',[NotificationController::class,'ongoingTest']); 
+    
+
     
 });
 
@@ -62,7 +70,5 @@ Route::post('reset_password',[AuthController::class,'resetpassword']);
 
 
 //web api routes//
-
-
 
 
