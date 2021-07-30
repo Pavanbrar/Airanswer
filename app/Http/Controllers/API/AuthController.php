@@ -62,6 +62,8 @@ class AuthController extends BaseController
         if (!$user_detail = User::where('email', $request->input("email"))->first()) {
             $user_detail = User::where('phone', $request->input("phone"))->first();
         }
+        $dob = $request->input('dob');
+        $final_dob = date('Y-m-d', strtotime($dob));
         if ($user_detail) {
             User::where('id', $user_detail->id)->update(
                 array(
@@ -69,7 +71,7 @@ class AuthController extends BaseController
                     'lastname' => $request->input("lastname"),
                     'phone' => $request->input("phone"),
                     'company_name' => $request->input("company_name"),
-                    'dob' => $request->input("dob"),
+                    'dob' =>$final_dob,
                     'device_type' => $request->input("device_type"),
                     'device_token' => $request->input("device_token"),
                     'gender' => $request->input("gender"),
@@ -83,7 +85,7 @@ class AuthController extends BaseController
             $user->lastname = $request->input("lastname");
             $user->phone = $request->input("phone");
             $user->company_name = $request->input("company_name");
-            $user->dob = $request->input("dob");
+            $user->dob = $final_dob;
             $user->device_type = $request->input("device_type");
             $user->device_token = $request->input("device_token");
             $user->gender = $request->input("gender");
@@ -370,10 +372,10 @@ class AuthController extends BaseController
         return response(['success' => true, 'code' => 200, 'message' => "User successfully logout"]);
     }
 
-    public function getUserId(Request $request)
+    public function getUserId(Request $request,$id)
     {
-        $user_id = $request->input('user_id');
-        $user_data = DB::table('users')->select('*')->where('id', '=', $user_id)->get();
+    
+        $user_data = DB::table('users')->select('*')->where('id', '=', $id)->get();
         if (count($user_data) > 0) {
             return apiResponse(true, 200, "User data feteched", $user_data);
         } else {
@@ -390,7 +392,7 @@ class AuthController extends BaseController
             return response()->json([
                 'success' => false,
                 'code' => 422,
-                'message' => ' Email/phone/username is required'
+                'message' => 'Email/phone/username is required'
             ]);
         }
 

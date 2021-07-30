@@ -36,18 +36,20 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     
     //faq routes//
-    Route::post('get-user-id',[AuthController::class,'getUserId']);
+    Route::get('get-user-id/{id}',[AuthController::class,'getUserId']);
     Route::delete('faq-delete/{id}',[FaqController::class,'delete']);
     Route::post('faq-add',[FaqController::class,'add']);
     Route::put('faq-update/{id}',[FaqController::class,'update']);
-
+    Route::get('get-faq-id/{id}',[FaqController::class,'getFaqId']); 
+    Route::get('faq-all',[FaqController::class,'faqAll']);
     //test//
 
     Route::delete('test-delete/{id}',[TestController::class,'delete']);
     Route::post('test-add',[TestController::class,'add']);
     Route::post('test-update/{id}',[TestController::class,'update']);
-
-   
+    Route::get('get-test-id/{id}',[TestController::class,'getTestId']);
+    Route::get('test-all',[TestController::class,'testAll']);
+    
 });
 
 Route::post('admin-login',[AuthController::class,'adminLogin']);
