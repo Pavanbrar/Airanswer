@@ -33,6 +33,20 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('get_user',[AuthController::class,'get_user']); 
     Route::post('faq',[AuthController::class,'faq']); 
     Route::post('tests',[AuthController::class,'tests']); 
+
+    
+    //faq routes//
+    Route::post('get-user-id',[AuthController::class,'getUserId']);
+    Route::delete('faq-delete/{id}',[FaqController::class,'delete']);
+    Route::post('faq-add',[FaqController::class,'add']);
+    Route::put('faq-update/{id}',[FaqController::class,'update']);
+
+    //test//
+
+    Route::delete('test-delete/{id}',[TestController::class,'delete']);
+    Route::post('test-add',[TestController::class,'add']);
+    Route::post('test-update/{id}',[TestController::class,'update']);
+
    
 });
 
@@ -46,18 +60,6 @@ Route::post('reset_password',[AuthController::class,'resetpassword']);
 
 
 //web api routes//
-
-//faq routes//
-Route::post('get-user-id',[AuthController::class,'getUserId']);
-Route::delete('faq-delete/{id}',[FaqController::class,'delete']);
-Route::post('faq-add',[FaqController::class,'add']);
-Route::post('faq-update/{id}',[FaqController::class,'update']);
-
-//test//
-
-Route::delete('test-delete/{id}',[TestController::class,'delete']);
-Route::post('test-add',[TestController::class,'add']);
-Route::post('test-update/{id}',[TestController::class,'update']);
 
 
 
