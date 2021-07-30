@@ -119,7 +119,7 @@ class NotificationController extends BaseController
        
     
         if (count($test) <= 0) {
-            return apiResponse(false, 201, "Test not found", $test);
+            return apiResponse(false, 201, "Test result not found", $test);
         } else {
 
             //date_default_timezone_set('Asia/Kolkata');
@@ -136,7 +136,7 @@ class NotificationController extends BaseController
             $start_test->testId =$test['id'];
             $start_test->save();
 
-            return apiResponse(true, 200, "Test has been saved successfully", $test);
+            return apiResponse(true, 200, "Test result has been saved successfully", $test);
           
         }
 
@@ -171,7 +171,7 @@ class NotificationController extends BaseController
 
                 [
                     'id' => 3,
-                    'date' => '27-07-2021 00:00:00',
+                    'date' =>date("d-m-Y H:i:s", strtotime($checkuserTest[0]->created_at)),
                     'device' => [
     
                         "id" => 3,
@@ -187,7 +187,7 @@ class NotificationController extends BaseController
                 ],
                 [
                     'id' => 2,
-                    'date' => '14-07-2021 00:00:00',
+                    'date' =>date("d-m-Y H:i:s", strtotime($checkuserTest[0]->created_at)),
                     'device' => [
     
                         "id" => 2,
@@ -203,7 +203,7 @@ class NotificationController extends BaseController
                 ],
                 [
                     'id' => 1,
-                    'date' => '13-07-2021 00:00:00',
+                    'date' =>date("d-m-Y H:i:s", strtotime($checkuserTest[0]->created_at)),
                     'device' => [
     
                         "id" => 1,
@@ -246,10 +246,10 @@ class NotificationController extends BaseController
            
         
             if (count($test) <= 0) {
-                return apiResponse(false, 201, "Ongoing test not found", $test);
+                return apiResponse(false, 201, "Test result not found", $test);
             } else {
                
-                return apiResponse(true, 200, "Ongoing test has been fetched successfully", $test);
+                return apiResponse(true, 200, "Test result will be available in next 3 days", $test);
               
             }
           
@@ -259,7 +259,7 @@ class NotificationController extends BaseController
             return response()->json([
                 'success'=>false,
                 'code' =>201,
-                'message' =>'Ongoing test not found.',
+                'message' =>'Test result not found.',
               ]);
         }
       
