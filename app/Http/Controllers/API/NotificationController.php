@@ -261,8 +261,7 @@ class NotificationController extends BaseController
                 
               
             }
-          
-          
+         
            
         }else{
             return response()->json([
