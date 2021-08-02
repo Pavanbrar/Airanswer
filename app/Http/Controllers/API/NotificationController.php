@@ -368,7 +368,7 @@ class NotificationController extends BaseController
   
        // $user_token=""; // Token generated from Android device after setting up firebase
         $title="New Message";
-        $n_msg="The is a message";
+        $n_msg="The is a message from postman";
         
         $ndata = array('title'=>$title,'body'=>$n_msg);
         
