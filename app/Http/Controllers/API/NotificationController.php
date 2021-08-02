@@ -20,7 +20,7 @@ class NotificationController extends BaseController
         $checkuserTest=DB::table('start_test')->select('*')->where(['user_id'=>$user->id,'status'=>'true'])->get();
         
         if(count($checkuserTest)>0){
-         //   $this->notifyUser();
+            $this->notifyUser();
             $current_time=date('Y-m-d H:i:s');
             if($current_time > $checkuserTest[0]->validity){
 
@@ -270,59 +270,59 @@ class NotificationController extends BaseController
     }
 
    
-  function send_notification_FCM($notification_id,$message) {
+//   function send_notification_FCM($notification_id,$message) {
 
-    $accesstoken = 'AAAAZPcd4OM:APA91bEgLCqI30s2mWWf3a5KQDfDngexRhgLnV7DLesBGGhZOcop24btbh60a2V2_Gs7NK5Gpidz1pgNC_SJkdPO4MKz_aGHZsCY1LL5kkP8GdJDYtWGdhcqqjyvX1qTrRS2Bqn3xitw';
+//     $accesstoken = 'AAAAZPcd4OM:APA91bEgLCqI30s2mWWf3a5KQDfDngexRhgLnV7DLesBGGhZOcop24btbh60a2V2_Gs7NK5Gpidz1pgNC_SJkdPO4MKz_aGHZsCY1LL5kkP8GdJDYtWGdhcqqjyvX1qTrRS2Bqn3xitw';
   
 
-    $URL = 'https://fcm.googleapis.com/fcm/send';
+//     $URL = 'https://fcm.googleapis.com/fcm/send';
 
 
-        $post_data = '{
-            "to" : "' . $notification_id . '",
-            "data" : {
-              "body" : "",
-              "message" : "' . $message . '",
-            },
-            "notification" : {
-                 "body" : "' . $message . '",
-                 "message" : "' . $message . '",
-                "icon" : "new",
-                "sound" : "default"
-                },
+//         $post_data = '{
+//             "to" : "' . $notification_id . '",
+//             "data" : {
+//               "body" : "",
+//               "message" : "' . $message . '",
+//             },
+//             "notification" : {
+//                  "body" : "' . $message . '",
+//                  "message" : "' . $message . '",
+//                 "icon" : "new",
+//                 "sound" : "default"
+//                 },
 
-          }';
-    //print_r($post_data);die;
+//           }';
+//     //print_r($post_data);die;
 
-    $crl = curl_init();
+//     $crl = curl_init();
 
-    $headr = array();
-    $headr[] = 'Content-type: application/json';
-    $headr[] = 'Authorization: ' . $accesstoken;
-    curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, false);
+//     $headr = array();
+//     $headr[] = 'Content-type: application/json';
+//     $headr[] = 'Authorization: ' . $accesstoken;
+//     curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, false);
 
-    curl_setopt($crl, CURLOPT_URL, $URL);
-    curl_setopt($crl, CURLOPT_HTTPHEADER, $headr);
+//     curl_setopt($crl, CURLOPT_URL, $URL);
+//     curl_setopt($crl, CURLOPT_HTTPHEADER, $headr);
 
-    curl_setopt($crl, CURLOPT_POST, true);
-    curl_setopt($crl, CURLOPT_POSTFIELDS, $post_data);
-    curl_setopt($crl, CURLOPT_RETURNTRANSFER, true);
+//     curl_setopt($crl, CURLOPT_POST, true);
+//     curl_setopt($crl, CURLOPT_POSTFIELDS, $post_data);
+//     curl_setopt($crl, CURLOPT_RETURNTRANSFER, true);
 
-    $rest = curl_exec($crl);
+//     $rest = curl_exec($crl);
 
-    if ($rest === false) {
-        // throw new Exception('Curl error: ' . curl_error($crl));
-        //print_r('Curl error: ' . curl_error($crl));
-        $result_noti = 0;
-    } else {
+//     if ($rest === false) {
+//         // throw new Exception('Curl error: ' . curl_error($crl));
+//         //print_r('Curl error: ' . curl_error($crl));
+//         $result_noti = 0;
+//     } else {
 
-        $result_noti = 1;
-    }
+//         $result_noti = 1;
+//     }
 
-    //curl_close($crl);
-    //print_r($result_noti);die;
-    return $result_noti;
-}
+//     //curl_close($crl);
+//     //print_r($result_noti);die;
+//     return $result_noti;
+// }
 
     // public function sendNotification()
     // {
@@ -362,20 +362,40 @@ class NotificationController extends BaseController
  
         $user= request()->user();
       
-        $notification_id =$user->device_token;
-        $message = "Have good day!";
-    
-      
-        $res = $this->send_notification_FCM($notification_id,$message);
-      
-        if($res == 1){
-      
-           echo 'success code';
-      
-        }else{
-      
-          echo 'fail code';
+       // $notification_id =$user->device_token;
+         $notification_id ='dSufHkOsRCelFwih0vpL_V:APA91bFuTPDk5IVu6oBeaEFcpLKCIUnlLJxswfjRhdDhFe9HcSge6G_EwWm6qoQJ7pVJCbP_42wz0MnvbN9yq99BZRN7MqOY4Y-x-dJs2nHZz-EdplE73QFlDTnw04NMGnw8KajsTGk_';
+        $server_key = 'AAAAZPcd4OM:APA91bEgLCqI30s2mWWf3a5KQDfDngexRhgLnV7DLesBGGhZOcop24btbh60a2V2_Gs7NK5Gpidz1pgNC_SJkdPO4MKz_aGHZsCY1LL5kkP8GdJDYtWGdhcqqjyvX1qTrRS2Bqn3xitw';
+  
+       // $user_token=""; // Token generated from Android device after setting up firebase
+        $title="New Message";
+        $n_msg="The is a message";
+        
+        $ndata = array('title'=>$title,'body'=>$n_msg);
+        
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        
+        $fields = array();
+        $fields['data'] = $ndata;
+        
+        $fields['to'] = $notification_id;
+        $headers = array(
+            'Content-Type:application/json',
+          'Authorization:key='.$server_key
+        );
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+        $result = curl_exec($ch);
+        if ($result === FALSE) {
+            die('FCM Send Error: ' . curl_error($ch));
         }
+        curl_close($ch);
          
       
      }
