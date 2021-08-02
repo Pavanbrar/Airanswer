@@ -44,7 +44,7 @@ class NotificationController extends BaseController
 
             [
                 'id' => 3,
-                'date' => '27-07-2021 00:00:00',
+                'date' => date('d-m-Y H:i:s'),
                 'device' => [
 
                     "id" => 3,
@@ -60,7 +60,7 @@ class NotificationController extends BaseController
             ],
             [
                 'id' => 2,
-                'date' => '14-07-2021 00:00:00',
+                'date' => date('d-m-Y H:i:s'),
                 'device' => [
 
                     "id" => 2,
@@ -76,7 +76,7 @@ class NotificationController extends BaseController
             ],
             [
                 'id' => 1,
-                'date' => '13-07-2021 00:00:00',
+                'date' =>date('d-m-Y H:i:s'),
                 'device' => [
 
                     "id" => 1,
@@ -119,7 +119,8 @@ class NotificationController extends BaseController
        
     
         if (count($test) <= 0) {
-            return apiResponse(false, 201, "Test not found", $test);
+           
+            return response(['success' => false, 'code' => 201, 'message' => "Invalid test"]);
         } else {
 
             //date_default_timezone_set('Asia/Kolkata');
@@ -136,7 +137,9 @@ class NotificationController extends BaseController
             $start_test->testId =$test['id'];
             $start_test->save();
 
-            return apiResponse(true, 200, "Test has been saved successfully", $test);
+            $test['test_duration']=5;
+
+            return apiResponse(true, 200, $test['test_name']." has been saved successfully", $test);
           
         }
 
@@ -171,7 +174,7 @@ class NotificationController extends BaseController
 
                 [
                     'id' => 3,
-                    'date' => '27-07-2021 00:00:00',
+                    'date' => date('d-m-Y H:i:s',strtotime($checkuserTest[0]->created_at)),
                     'device' => [
     
                         "id" => 3,
@@ -183,11 +186,12 @@ class NotificationController extends BaseController
     
                     ],
                     'test_name' => 'asthma test',
-                    "location" => "india"
+                    "location" => "india",
+                    "test_duration"=>5
                 ],
                 [
                     'id' => 2,
-                    'date' => '14-07-2021 00:00:00',
+                    'date' => date('d-m-Y H:i:s',strtotime($checkuserTest[0]->created_at)),
                     'device' => [
     
                         "id" => 2,
@@ -199,11 +203,12 @@ class NotificationController extends BaseController
     
                     ],
                     'test_name' => 'Covid Test',
-                    "location" => "america"
+                    "location" => "america",
+                    "test_duration"=>5
                 ],
                 [
                     'id' => 1,
-                    'date' => '13-07-2021 00:00:00',
+                    'date' => date('d-m-Y H:i:s',strtotime($checkuserTest[0]->created_at)),
                     'device' => [
     
                         "id" => 1,
@@ -215,7 +220,8 @@ class NotificationController extends BaseController
     
                     ],
                     'test_name' => 'Thyroid Test',
-                    "location" => "south africa"
+                    "location" => "south africa",
+                    "test_duration"=>5
     
                 ],
     
@@ -246,10 +252,14 @@ class NotificationController extends BaseController
            
         
             if (count($test) <= 0) {
-                return apiResponse(false, 201, "Ongoing test not found", $test);
+                
+                  
+            return response(['success' => false, 'code' => 201, 'message' => "Test result not found"]);
+                
             } else {
                
-                return apiResponse(true, 200, "Ongoing test has been fetched successfully", $test);
+                return apiResponse(true, 200, $test['test_name']." result will be available in next 3 days.", $test);
+                
               
             }
           
@@ -259,7 +269,7 @@ class NotificationController extends BaseController
             return response()->json([
                 'success'=>false,
                 'code' =>201,
-                'message' =>'Ongoing test not found.',
+                'message' =>'Test result not found.',
               ]);
         }
       
@@ -368,7 +378,7 @@ class NotificationController extends BaseController
   
        // $user_token=""; // Token generated from Android device after setting up firebase
         $title="New Message";
-        $n_msg="The is a message from postman";
+        $n_msg="The is a message from";
         
         $ndata = array('title'=>$title,'body'=>$n_msg);
         
