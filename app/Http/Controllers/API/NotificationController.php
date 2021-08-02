@@ -10,6 +10,13 @@ use App\Models\StartTest;
 
 class NotificationController extends BaseController
 {
+
+    public function __construct()
+    {
+      //  parent::__construct();
+        date_default_timezone_set('Asia/Kolkata');
+    }
+ 
     public function startTest(Request $request)
     {
         $deviceId=$request->input('deviceId');
@@ -20,18 +27,21 @@ class NotificationController extends BaseController
         $checkuserTest=DB::table('start_test')->select('*')->where(['user_id'=>$user->id,'status'=>'true'])->get();
         
         if(count($checkuserTest)>0){
-            $this->notifyUser();
+          
+      
+      
             $current_time=date('Y-m-d H:i:s');
-            if($current_time > $checkuserTest[0]->validity){
+            // if($current_time > $checkuserTest[0]->validity){
 
-                $update_status = DB::table('start_test')
-                ->where('user_id', $checkuserTest[0]->user_id)
-                ->update([
-                    'status' =>'false',
-                   // 'validity' => date('Y-m-d H:i:s')
-                ]);  
+            //     $update_status = DB::table('start_test')
+            //     ->where('user_id', $checkuserTest[0]->user_id)
+            //     ->update([
+            //         'status' =>'false',
+            //        // 'validity' => date('Y-m-d H:i:s')
+            //     ]); 
+            //     $this->notifyUser($user->device_token); 
              
-            }
+            // }
           
             return response()->json([
                 'success'=>false,
@@ -157,16 +167,17 @@ class NotificationController extends BaseController
         
         if(count($checkuserTest)>0){ 
 
-            $current_time=date('Y-m-d H:i:s');
-            if($current_time > $checkuserTest[0]->validity){
+            // $current_time=date('Y-m-d H:i:s');
+            // if($current_time > $checkuserTest[0]->validity){
 
-                $update_status = DB::table('start_test')
-                ->where('user_id', $checkuserTest[0]->user_id)
-                ->update([
-                    'status' =>'false',
-                   // 'validity' => date('Y-m-d H:i:s')
-                ]);  
-            }
+            //     $update_status = DB::table('start_test')
+            //     ->where('user_id', $checkuserTest[0]->user_id)
+            //     ->update([
+            //         'status' =>'false',
+            //        // 'validity' => date('Y-m-d H:i:s')
+            //     ]);  
+            //     $this->notifyUser($user->device_token);
+            // }
 
             $test_array = [
 
@@ -366,46 +377,5 @@ class NotificationController extends BaseController
   
     //     print_r($response);
     // }
-    public function notifyUser(){
- 
-        $user= request()->user();
-      
-       // $notification_id =$user->device_token;
-         $notification_id ='dSufHkOsRCelFwih0vpL_V:APA91bFuTPDk5IVu6oBeaEFcpLKCIUnlLJxswfjRhdDhFe9HcSge6G_EwWm6qoQJ7pVJCbP_42wz0MnvbN9yq99BZRN7MqOY4Y-x-dJs2nHZz-EdplE73QFlDTnw04NMGnw8KajsTGk_';
-        $server_key = 'AAAAZPcd4OM:APA91bEgLCqI30s2mWWf3a5KQDfDngexRhgLnV7DLesBGGhZOcop24btbh60a2V2_Gs7NK5Gpidz1pgNC_SJkdPO4MKz_aGHZsCY1LL5kkP8GdJDYtWGdhcqqjyvX1qTrRS2Bqn3xitw';
-  
-       // $user_token=""; // Token generated from Android device after setting up firebase
-        $title="New Message";
-        $n_msg="The is a message from";
-        
-        $ndata = array('title'=>$title,'body'=>$n_msg);
-        
-        $url = 'https://fcm.googleapis.com/fcm/send';
-        
-        $fields = array();
-        $fields['data'] = $ndata;
-        
-        $fields['to'] = $notification_id;
-        $headers = array(
-            'Content-Type:application/json',
-          'Authorization:key='.$server_key
-        );
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
-        $result = curl_exec($ch);
-        if ($result === FALSE) {
-            die('FCM Send Error: ' . curl_error($ch));
-        }
-        curl_close($ch);
-         
-      
-     }
-
+    
 }
