@@ -471,6 +471,14 @@ class AuthController extends BaseController
             'token' => $token
         ];
 
+        $device_token=$request->input('device_token');
+        $update_device_token = DB::table('users')
+        ->where('id',$user->id)
+        ->update([
+            'device_token' =>$device_token
+         
+        ]);  
+
 
         return apiResponse(true, 200, "Logged in successfully", $response);
     }
