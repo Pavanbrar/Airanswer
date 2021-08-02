@@ -119,7 +119,8 @@ class NotificationController extends BaseController
        
     
         if (count($test) <= 0) {
-            return apiResponse(false, 201, "Test not found", $test);
+           
+            return response(['success' => false, 'code' => 201, 'message' => "Invalid test"]);
         } else {
 
             //date_default_timezone_set('Asia/Kolkata');
@@ -135,6 +136,8 @@ class NotificationController extends BaseController
             $start_test->deviceId = $test['device']['device_id'];
             $start_test->testId =$test['id'];
             $start_test->save();
+
+            $test['test_duration']=5;
 
             return apiResponse(true, 200, "Test has been saved successfully", $test);
           
@@ -183,7 +186,8 @@ class NotificationController extends BaseController
     
                     ],
                     'test_name' => 'asthma test',
-                    "location" => "india"
+                    "location" => "india",
+                    "test_duration"=>5
                 ],
                 [
                     'id' => 2,
@@ -199,7 +203,8 @@ class NotificationController extends BaseController
     
                     ],
                     'test_name' => 'Covid Test',
-                    "location" => "america"
+                    "location" => "america",
+                    "test_duration"=>5
                 ],
                 [
                     'id' => 1,
@@ -215,7 +220,8 @@ class NotificationController extends BaseController
     
                     ],
                     'test_name' => 'Thyroid Test',
-                    "location" => "south africa"
+                    "location" => "south africa",
+                    "test_duration"=>5
     
                 ],
     
@@ -246,10 +252,14 @@ class NotificationController extends BaseController
            
         
             if (count($test) <= 0) {
-                return apiResponse(false, 201, "Test result not found", $test);
+                
+                  
+            return response(['success' => false, 'code' => 201, 'message' => "Test result not found"]);
+                
             } else {
                
                 return apiResponse(true, 200, "Test result will be available in next 3 days.", $test);
+                
               
             }
           
