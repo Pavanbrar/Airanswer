@@ -42,7 +42,7 @@ class NotificationController extends BaseController
         $test_array = [
 
 
-            [
+    [
                 'id' => 3,
                 'date' => date('d-m-Y H:i:s'),
                 'device' => [
@@ -123,7 +123,6 @@ class NotificationController extends BaseController
             return response(['success' => false, 'code' => 201, 'message' => "Invalid test"]);
         } else {
 
-            //date_default_timezone_set('Asia/Kolkata');
           
             $testValidity=date('Y-m-d H:i:s',strtotime('+5 min')); 
          
