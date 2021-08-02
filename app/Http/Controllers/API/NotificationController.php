@@ -44,7 +44,7 @@ class NotificationController extends BaseController
 
             [
                 'id' => 3,
-                'date' => '27-07-2021 00:00:00',
+                'date' => date('d-m-Y H:i:s'),
                 'device' => [
 
                     "id" => 3,
@@ -60,7 +60,7 @@ class NotificationController extends BaseController
             ],
             [
                 'id' => 2,
-                'date' => '14-07-2021 00:00:00',
+                'date' => date('d-m-Y H:i:s'),
                 'device' => [
 
                     "id" => 2,
@@ -76,7 +76,7 @@ class NotificationController extends BaseController
             ],
             [
                 'id' => 1,
-                'date' => '13-07-2021 00:00:00',
+                'date' =>date('d-m-Y H:i:s'),
                 'device' => [
 
                     "id" => 1,
@@ -139,7 +139,7 @@ class NotificationController extends BaseController
 
             $test['test_duration']=5;
 
-            return apiResponse(true, 200, "Test has been saved successfully", $test);
+            return apiResponse(true, 200, $test['test_name']." has been saved successfully", $test);
           
         }
 
@@ -258,7 +258,7 @@ class NotificationController extends BaseController
                 
             } else {
                
-                return apiResponse(true, 200, "Test result will be available in next 3 days.", $test);
+                return apiResponse(true, 200, $test['test_name']." result will be available in next 3 days.", $test);
                 
               
             }
