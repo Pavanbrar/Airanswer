@@ -33,7 +33,7 @@ class FaqController extends BaseController
         }
     }
 
-    public function getFaqId(Request $request,$id)
+    public function getFaqId($id)
     {
       
         $faq_data = DB::table('faq')->select('*')->where('id', '=', $id)->get();
@@ -44,7 +44,7 @@ class FaqController extends BaseController
         }
     }
 
-    public function faqAll(Request $request)
+    public function faqAll()
     {
         $faq = Faq::all();
         return apiResponse(true, 200, "data fetch successfully",$faq);
