@@ -11,29 +11,29 @@ class FaqController extends BaseController
 {
     public function add(Request $request)
     {
-      
+
         $faq = new Faq;
-        $faq->question =$request->input('question');
+        $faq->question = $request->input('question');
         $faq->answer = $request->input('answer');
         $faq->save();
-        return apiResponse(true, 200, "data added successfully"); 
+        return apiResponse(true, 200, "data added successfully");
     }
 
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
         $faq_update = Faq::find($id);
-        if($faq_update){
+        if ($faq_update) {
 
-            $faq_update->question =$request->input('question');
+            $faq_update->question = $request->input('question');
             $faq_update->answer = $request->input('answer');
             $faq_update->save();
-            return apiResponse(true, 200, "data updated successfully"); 
-        }else{
+            return apiResponse(true, 200, "data updated successfully");
+        } else {
             return apiResponse(false, 201, "id  not found");
         }
     }
 
-    public function getFaqId(Request $request,$id)
+    public function getFaqId($id)
     {
       
         $faq_data = DB::table('faq')->select('*')->where('id', '=', $id)->get();
@@ -44,7 +44,7 @@ class FaqController extends BaseController
         }
     }
 
-    public function faqAll(Request $request)
+    public function faqAll()
     {
         $faq = Faq::all();
         return apiResponse(true, 200, "data fetch successfully",$faq);
@@ -52,16 +52,14 @@ class FaqController extends BaseController
 
     public function delete($id)
     {
-      
-         $faqDelete = Faq::find($id);
-      
-         if($faqDelete){
+
+        $faqDelete = Faq::find($id);
+
+        if ($faqDelete) {
             $faqDelete->delete();
             return apiResponse(true, 200, "data deleted successfully");
-        }else{
+        } else {
             return apiResponse(false, 201, "id  not found");
         }
-        
-        
     }
 }

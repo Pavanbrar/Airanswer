@@ -268,7 +268,7 @@ class NotificationController extends BaseController
                 
             } else {
                
-                return apiResponse(true, 200, $test['test_name']." result will be available in next 3 days.", $test);
+                return apiResponse(true, 200, $test['test_name']." result will be available in next " .$test['test_duration']. " minute.", $test);
                 
               
             }

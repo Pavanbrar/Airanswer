@@ -44,7 +44,7 @@ class AuthController extends BaseController
             'phone' => 'required|string|max:20',
             'email' => 'required|string|email|max:255',
             'company_name' => 'required|string|min:6',
-            'dob' => 'required|max:20',
+            'dob' => 'required|date|max:20',
             'password' => 'required|max:60',
             'gender' => 'required',
         ]);
@@ -341,12 +341,12 @@ class AuthController extends BaseController
     }
 
 
-    public function get_user(Request $request)
+    public function get_user()
     {
 
-        $user = $request->user();
-        $response = [
-            'user_id' => $user->id,
+        $users =  User::all();
+        foreach ($users as $user) {
+           $response =array( 'user_id' => $user->id,
             'username' => $user->username,
             'firstname' => $user->firstname,
             'lastname' => $user->lastname,
@@ -357,9 +357,11 @@ class AuthController extends BaseController
             'company_name' => $user->company_name,
             'status' => $user->status,
             'device_type' => $user->device_type,
-            'device_token' => $user->device_token,
-        ];
-        return apiResponse(true, 200, "User data feteched", $response);
+            'device_token' => $user->device_token);
+            $data [] =  $response;
+        }
+       
+        return apiResponse(true, 200, "User data feteched", $data);
     }
 
 
