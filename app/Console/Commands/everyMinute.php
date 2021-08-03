@@ -56,21 +56,22 @@ class everyMinute extends Command
                        
                     ]);  
                 $device_tokens=DB::table('users')->select('device_token')->where(['id'=>$value->user_id])->get();   
-                $this->notifyUser($device_tokens[0]->device_token);
+                $this->notifyUser($device_tokens[0]->device_token,$value->test_name);
             }
         }
         
     }
 
-    public function notifyUser($device_token){
+    public function notifyUser($device_token,$test_name){
+
  
         $notification_id =$device_token;
         // $notification_id ='dSufHkOsRCelFwih0vpL_V:APA91bFuTPDk5IVu6oBeaEFcpLKCIUnlLJxswfjRhdDhFe9HcSge6G_EwWm6qoQJ7pVJCbP_42wz0MnvbN9yq99BZRN7MqOY4Y-x-dJs2nHZz-EdplE73QFlDTnw04NMGnw8KajsTGk_';
         $server_key ='AAAAZPcd4OM:APA91bEgLCqI30s2mWWf3a5KQDfDngexRhgLnV7DLesBGGhZOcop24btbh60a2V2_Gs7NK5Gpidz1pgNC_SJkdPO4MKz_aGHZsCY1LL5kkP8GdJDYtWGdhcqqjyvX1qTrRS2Bqn3xitw';
   
        // $user_token=""; // Token generated from Android device after setting up firebase
-        $title="Notification";
-        $n_msg="Your test has been completed";
+        $title="Air Answers";
+        $n_msg=$test_name." has been completed";
         
         $ndata = array('title'=>$title,'body'=>$n_msg);
         
