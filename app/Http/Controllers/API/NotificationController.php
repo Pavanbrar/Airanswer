@@ -66,7 +66,7 @@ class NotificationController extends BaseController
 
                 ],
                 'test_name' => 'asthma test',
-                "location" => "india"
+                "location" =>$location
             ],
             [
                 'id' => 2,
@@ -82,7 +82,7 @@ class NotificationController extends BaseController
 
                 ],
                 'test_name' => 'Covid Test',
-                "location" => "america"
+                "location" =>$location
             ],
             [
                 'id' => 1,
@@ -98,24 +98,24 @@ class NotificationController extends BaseController
 
                 ],
                 'test_name' => 'Thyroid Test',
-                "location" => "south africa"
+                "location" =>$location
 
             ],
 
 
         ];
      
-        if ($deviceId != '' && $testId != '' && $location!='') {
+        if ($deviceId != '' && $testId != '') {
 
 
-            if ($deviceId == 'ASD23242342' && $testId == '1' && $location =='south africa') {
+            if ($deviceId == 'ASD23242342' && $testId == '1') {
 
                 $test = $test_array[2];
               //  $test = $tests;
-            } elseif ($deviceId == 'FRT654576544' && $testId == '2'  && $location =='america') {
+            } elseif ($deviceId == 'FRT654576544' && $testId == '2') {
                 $test = $test_array[1];
               //  $test = $tests;
-            } elseif ($deviceId == 'RTP6576576' && $testId == '3'  && $location =='india') {
+            } elseif ($deviceId == 'RTP6576576' && $testId == '3') {
                 $test = $test_array[0];
               //  $test = $tests;
             } else {
@@ -144,6 +144,7 @@ class NotificationController extends BaseController
             $start_test->location =$test['location'];
             $start_test->deviceId = $test['device']['device_id'];
             $start_test->testId =$test['id'];
+            $start_test->test_name =$test['test_name'];
             $start_test->save();
 
             $test['test_duration']=5;
@@ -196,7 +197,7 @@ class NotificationController extends BaseController
     
                     ],
                     'test_name' => 'asthma test',
-                    "location" => "india",
+                    "location" => $checkuserTest[0]->location,
                     "test_duration"=>5
                 ],
                 [
@@ -213,7 +214,7 @@ class NotificationController extends BaseController
     
                     ],
                     'test_name' => 'Covid Test',
-                    "location" => "america",
+                    "location" => $checkuserTest[0]->location,
                     "test_duration"=>5
                 ],
                 [
@@ -230,7 +231,7 @@ class NotificationController extends BaseController
     
                     ],
                     'test_name' => 'Thyroid Test',
-                    "location" => "south africa",
+                    "location" => $checkuserTest[0]->location,
                     "test_duration"=>5
     
                 ],
@@ -238,17 +239,17 @@ class NotificationController extends BaseController
     
             ];
          
-            if ($checkuserTest[0]->deviceId != '' && $checkuserTest[0]->testId != '' && $checkuserTest[0]->location !='') {
+            if ($checkuserTest[0]->deviceId != '' && $checkuserTest[0]->testId != '') {
     
     
-                if ($checkuserTest[0]->deviceId == 'ASD23242342' && $checkuserTest[0]->testId == '1' &&  $checkuserTest[0]->location =='south africa') {
+                if ($checkuserTest[0]->deviceId == 'ASD23242342' && $checkuserTest[0]->testId == '1') {
     
                     $test = $test_array[2];
                   //  $test = $tests;
-                } elseif ($checkuserTest[0]->deviceId == 'FRT654576544' && $checkuserTest[0]->testId == '2'  && $checkuserTest[0]->location =='america') {
+                } elseif ($checkuserTest[0]->deviceId == 'FRT654576544' && $checkuserTest[0]->testId == '2') {
                     $test = $test_array[1];
                   //  $test = $tests;
-                } elseif ($checkuserTest[0]->deviceId == 'RTP6576576' && $checkuserTest[0]->testId == '3'  &&  $checkuserTest[0]->location =='india') {
+                } elseif ($checkuserTest[0]->deviceId == 'RTP6576576' && $checkuserTest[0]->testId == '3') {
                     $test = $test_array[0];
                   //  $test = $tests;
                 } else {
@@ -268,7 +269,7 @@ class NotificationController extends BaseController
                 
             } else {
                
-                return apiResponse(true, 200, $test['test_name']." result will be available in next 3 days.", $test);
+                return apiResponse(true, 200, $test['test_name']." result will be available in next " .$test['test_duration']. " minute.", $test);
                 
               
             }

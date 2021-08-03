@@ -6,11 +6,27 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use Illuminate\Support\Facades\DB;
 use App\Models\Test;
+use Illuminate\Support\Facades\Validator;
 
 class TestController extends BaseController
 {
     public function add(Request $request)
     {
+        $validator =  Validator::make($request->all(), [
+            'test' => 'required|string|max:50',
+            'description' => 'required|string|max:255',
+            'instructions' => 'required|string|max:255',
+          
+            
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "success" => "false",
+                "code" => "422",
+                "message" => $validator->errors()
+            ]);
+        }
       
         $test = new Test;
         $test->test =$request->input('test');
