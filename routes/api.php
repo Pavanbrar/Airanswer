@@ -47,7 +47,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::delete('test-delete/{id}',[TestController::class,'delete']);
     Route::post('test-add',[TestController::class,'add']);
-    Route::post('test-update/{id}',[TestController::class,'update']);
+    Route::put('test-update/{id}',[TestController::class,'update']);
     Route::get('get-test-id/{id}',[TestController::class,'getTestId']);
     Route::get('test-all',[TestController::class,'testAll']);
 
