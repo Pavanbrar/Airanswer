@@ -367,9 +367,10 @@ class AuthController extends BaseController
 
     public function logout(Request $request)
     {
-
+        $user=request()->user();
+        $remove_device_token= DB::table('users')->where('id', $user->id)->update(['device_token'=>'']);
         auth()->user()->tokens()->delete();
-
+       
 
         return response(['success' => true, 'code' => 200, 'message' => "User successfully logout"]);
     }
