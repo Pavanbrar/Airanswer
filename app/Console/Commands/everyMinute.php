@@ -55,8 +55,17 @@ class everyMinute extends Command
                         'status' =>'false',
                        
                     ]);  
-                $device_tokens=DB::table('users')->select('device_token')->where(['id'=>$value->user_id])->get();   
-                $this->notifyUser($device_tokens[0]->device_token,$value->test_name);
+
+                    $device_tokens_data=DB::table('device_token_table')->select('*')->where(['user_id'=>$value->user_id])->get(); 
+                    $device_token=array();
+                    foreach($device_tokens_data as $key=>$val){
+               
+                       $device_token[]=$val->device_token;
+                      
+                    }
+                    $this->notifyUser($device_token,$value->test_name);
+               // $device_tokens=DB::table('users')->select('device_token')->where(['id'=>$value->user_id])->get();   
+               
             }
         }
         
@@ -64,8 +73,8 @@ class everyMinute extends Command
 
     public function notifyUser($device_token,$test_name){
 
- 
-        $notification_id =$device_token;
+      
+        $notification_id=$device_token;
         // $notification_id ='dSufHkOsRCelFwih0vpL_V:APA91bFuTPDk5IVu6oBeaEFcpLKCIUnlLJxswfjRhdDhFe9HcSge6G_EwWm6qoQJ7pVJCbP_42wz0MnvbN9yq99BZRN7MqOY4Y-x-dJs2nHZz-EdplE73QFlDTnw04NMGnw8KajsTGk_';
         $server_key ='AAAAZPcd4OM:APA91bEgLCqI30s2mWWf3a5KQDfDngexRhgLnV7DLesBGGhZOcop24btbh60a2V2_Gs7NK5Gpidz1pgNC_SJkdPO4MKz_aGHZsCY1LL5kkP8GdJDYtWGdhcqqjyvX1qTrRS2Bqn3xitw';
   
@@ -80,7 +89,7 @@ class everyMinute extends Command
         $fields = array();
         $fields['notification'] = $ndata;
         
-        $fields['to'] = $notification_id;
+        $fields['registration_ids'] = $notification_id;
         $headers = array(
             'Content-Type:application/json',
           'Authorization:key='.$server_key

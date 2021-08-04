@@ -368,7 +368,8 @@ class AuthController extends BaseController
     public function logout(Request $request)
     {
         $user=request()->user();
-        $remove_device_token= DB::table('users')->where('id', $user->id)->update(['device_token'=>'']);
+       // $remove_device_token= DB::table('users')->where('id', $user->id)->update(['device_token'=>'']);
+        $remove_device_token= DB::table('device_token_table')->where('user_id', $user->id)->delete();
         auth()->user()->tokens()->delete();
        
 
@@ -473,12 +474,13 @@ class AuthController extends BaseController
         ];
 
         $device_token=$request->input('device_token');
-        $update_device_token = DB::table('users')
-        ->where('id',$user->id)
-        ->update([
-            'device_token' =>$device_token
+        // $update_device_token = DB::table('users')
+        // ->where('id',$user->id)
+        // ->update([
+        //     'device_token' =>$device_token
          
-        ]);  
+        // ]);  
+        DB::table('device_token_table')->insert(['user_id'=>$user->id,'device_token'=>$device_token]);
 
 
         return apiResponse(true, 200, "Logged in successfully", $response);
