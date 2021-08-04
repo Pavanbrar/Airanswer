@@ -330,7 +330,136 @@ class NotificationController extends BaseController
      
     }
 
-   
+    public function ongoingAllTest()
+    {
+        
+        
+        $checkuserTest=DB::table('start_test')->select('*')->where(['status'=>'true'])->get();
+       
+        
+        if(count($checkuserTest)>0){ 
+
+            // $current_time=date('Y-m-d H:i:s');
+            // if($current_time > $checkuserTest[0]->validity){
+
+            //     $update_status = DB::table('start_test')
+            //     ->where('user_id', $checkuserTest[0]->user_id)
+            //     ->update([
+            //         'status' =>'false',
+            //        // 'validity' => date('Y-m-d H:i:s')
+            //     ]);  
+            //     $this->notifyUser($user->device_token);
+            // }
+
+            $test_array = [
+
+
+                [
+                    'id' => 3,
+                    'date' => date('d-m-Y H:i:s',strtotime($checkuserTest[0]->created_at)),
+                    'device' => [
+    
+                        "id" => 3,
+                        "device_id" => "RTP6576576",
+                        "device_name" => "device 3",
+                        "created_at" => "27-07-2021 00:00:00",
+                        "updated_at" => null
+    
+    
+                    ],
+                    'test_name' => 'Asthma test',
+                    "location" => $checkuserTest[0]->location,
+                    "test_duration"=>5
+                ],
+                [
+                    'id' => 1,
+                    'date' => date('d-m-Y H:i:s',strtotime($checkuserTest[0]->created_at)),
+                    'device' => [
+    
+                        "id" => 2,
+                        "device_id" => "FRT654576544",
+                        "device_name" => "device 2",
+                        "created_at" => "24-07-2021 00:00:00",
+                        "updated_at" => null
+    
+    
+                    ],
+                    'test_name' => 'Covid-19 test',
+                    "location" => $checkuserTest[0]->location,
+                    "test_duration"=>5
+                ],
+                [
+                    'id' => 2,
+                    'date' => date('d-m-Y H:i:s',strtotime($checkuserTest[0]->created_at)),
+                    'device' => [
+    
+                        "id" => 1,
+                        "device_id" => "ASD23242342",
+                        "device_name" => "device 1",
+                        "created_at" => "21-07-2021 00:00:00",
+                        "updated_at" => null
+    
+    
+                    ],
+                    'test_name' => 'Fungus test',
+                    "location" => $checkuserTest[0]->location,
+                    "test_duration"=>5
+    
+                ],
+    
+    
+            ];
+         
+            if ($checkuserTest[0]->deviceId != '') {
+    
+    
+                if ($checkuserTest[0]->deviceId == 'ASD23242342' ) {
+    
+                    $test = $test_array[2];
+                  //  $test = $tests;
+                } elseif ($checkuserTest[0]->deviceId == 'FRT654576544') {
+                    $test = $test_array[1];
+                  //  $test = $tests;
+                } elseif ($checkuserTest[0]->deviceId == 'RTP6576576') {
+                    $test = $test_array[0];
+                  //  $test = $tests;
+                } else {
+    
+                    $test = [];
+                }
+            }  else {
+    
+                $test = [];
+            }
+           
+        
+            if (count($test) <= 0) {
+                
+                  
+            return response(['success' => false, 'code' => 201, 'message' => "Test result not found"]);
+                
+            } else {
+               
+                return apiResponse(true, 200, $test['test_name']." result will be available in next " .$test['test_duration']. " minutes.", $test);
+                
+              
+            }
+         
+           
+        }else{
+            return response()->json([
+                'success'=>false,
+                'code' =>201,
+                'message' =>'Test result not found.',
+              ]);
+        }
+      
+
+    
+        
+     
+    }
+
 //   function send_notification_FCM($notification_id,$message) {
 
 //     $accesstoken = 'AAAAZPcd4OM:APA91bEgLCqI30s2mWWf3a5KQDfDngexRhgLnV7DLesBGGhZOcop24btbh60a2V2_Gs7NK5Gpidz1pgNC_SJkdPO4MKz_aGHZsCY1LL5kkP8GdJDYtWGdhcqqjyvX1qTrRS2Bqn3xitw';
