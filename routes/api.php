@@ -55,8 +55,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     
     Route::post('start-test',[NotificationController::class,'startTest']); 
     Route::post('ongoing-test',[NotificationController::class,'ongoingTest']); 
-    
-
+    Route::get('ongoing-all-test',[NotificationController::class,'ongoingAllTest']); 
     
 });
 
