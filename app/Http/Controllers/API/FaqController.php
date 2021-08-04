@@ -6,11 +6,28 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use Illuminate\Support\Facades\DB;
 use App\Models\Faq;
+use Illuminate\Support\Facades\Validator;
+
 
 class FaqController extends BaseController
 {
     public function add(Request $request)
     {
+        $validator =  Validator::make($request->all(), [
+          
+            'question' => 'required|string|max:255',
+            'answer' => 'required|string|max:255',
+          
+            
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "success" => "false",
+                "code" => "422",
+                "message" => $validator->errors()
+            ]);
+        }
 
         $faq = new Faq;
         $faq->question = $request->input('question');

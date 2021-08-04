@@ -367,9 +367,10 @@ class AuthController extends BaseController
 
     public function logout(Request $request)
     {
-
+        $user=request()->user();
+        $remove_device_token= DB::table('users')->where('id', $user->id)->update(['device_token'=>'']);
         auth()->user()->tokens()->delete();
-
+       
 
         return response(['success' => true, 'code' => 200, 'message' => "User successfully logout"]);
     }
@@ -674,7 +675,7 @@ class AuthController extends BaseController
 
 
                 ],
-                'test_name' => 'asthma test',
+                'test_name' => 'Asthma test',
                 "location" => "india"
             ],
             [
@@ -690,7 +691,7 @@ class AuthController extends BaseController
 
 
                 ],
-                'test_name' => 'Covid Test',
+                'test_name' => 'Covid-19 test',
                 "location" => "america"
             ],
             [
@@ -706,7 +707,7 @@ class AuthController extends BaseController
 
 
                 ],
-                'test_name' => 'Thyroid Test',
+                'test_name' => 'Fungus test',
                 "location" => "south africa"
 
             ],
