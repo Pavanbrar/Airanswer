@@ -22,6 +22,15 @@ class NotificationController extends BaseController
         $deviceId=$request->input('deviceId');
         $location=$request->input('location');
         $testId=$request->input('testId');
+
+        if($deviceId==''){
+
+            return response()->json([
+                'success'=>false,
+                'code' =>201,
+                'message' =>'Device id required',
+              ]); 
+        }
         $user= request()->user();
         
         $checkuserTest=DB::table('start_test')->select('*')->where(['user_id'=>$user->id,'status'=>'true'])->get();
@@ -31,109 +40,112 @@ class NotificationController extends BaseController
       
       
             $current_time=date('Y-m-d H:i:s');
-            // if($current_time > $checkuserTest[0]->validity){
-
-            //     $update_status = DB::table('start_test')
-            //     ->where('user_id', $checkuserTest[0]->user_id)
-            //     ->update([
-            //         'status' =>'false',
-            //        // 'validity' => date('Y-m-d H:i:s')
-            //     ]); 
-            //     $this->notifyUser($user->device_token); 
-             
-            // }
-          
+           
             return response()->json([
                 'success'=>false,
                 'code' =>201,
                 'message' =>'User can start only one test at a time.',
               ]);
         }
-        $test_array = [
+    //     $test_array = [
 
 
-    [
-                'id' => 3,
-                'date' => date('d-m-Y H:i:s'),
-                'device' => [
+    // [
+    //             'id' => 3,
+    //             'date' => date('d-m-Y H:i:s'),
+    //             'device' => [
 
-                    "id" => 3,
-                    "device_id" => "RTP6576576",
-                    "device_name" => "device 3",
-                    "created_at" => "27-07-2021 00:00:00",
-                    "updated_at" => null
-
-
-                ],
-                'test_name' => 'Asthma test',
-                "location" =>$location
-            ],
-            [
-                'id' => 3,
-                'date' => date('d-m-Y H:i:s'),
-                'device' => [
-
-                    "id" => 1,
-                    "device_id" => "FRT654576544",
-                    "device_name" => "device 2",
-                    "created_at" => "24-07-2021 00:00:00",
-                    "updated_at" => null
+    //                 "id" => 3,
+    //                 "device_id" => "RTP6576576",
+    //                 "device_name" => "device 3",
+    //                 "created_at" => "27-07-2021 00:00:00",
+    //                 "updated_at" => null
 
 
-                ],
-                'test_name' => 'Covid-19 test',
-                "location" =>$location
-            ],
-            [
-                'id' => 2,
-                'date' =>date('d-m-Y H:i:s'),
-                'device' => [
+    //             ],
+    //             'test_name' => 'Asthma test',
+    //             "location" =>$location
+    //         ],
+    //         [
+    //             'id' =>1,
+    //             'date' => date('d-m-Y H:i:s'),
+    //             'device' => [
 
-                    "id" => 1,
-                    "device_id" => "ASD23242342",
-                    "device_name" => "device 1",
-                    "created_at" => "21-07-2021 00:00:00",
-                    "updated_at" => null
-
-
-                ],
-                'test_name' => 'Fungus test',
-                "location" =>$location
-
-            ],
+    //                 "id" => 2,
+    //                 "device_id" => "FRT654576544",
+    //                 "device_name" => "device 2",
+    //                 "created_at" => "24-07-2021 00:00:00",
+    //                 "updated_at" => null
 
 
-        ];
+    //             ],
+    //             'test_name' => 'Covid-19 test',
+    //             "location" =>$location
+    //         ],
+    //         [
+    //             'id' => 2,
+    //             'date' =>date('d-m-Y H:i:s'),
+    //             'device' => [
+
+    //                 "id" => 1,
+    //                 "device_id" => "ASD23242342",
+    //                 "device_name" => "device 1",
+    //                 "created_at" => "21-07-2021 00:00:00",
+    //                 "updated_at" => null
+
+
+    //             ],
+    //             'test_name' => 'Fungus test',
+    //             "location" =>$location
+
+    //         ],
+
+
+    //     ];
      
-        if ($deviceId != '') {
+        // if ($deviceId != '') {
 
 
-            if ($deviceId == 'ASD23242342') {
+        //     if ($deviceId == 'ASD23242342') {
 
-                $test = $test_array[2];
-              //  $test = $tests;
-            } elseif ($deviceId == 'FRT654576544' ) {
-                $test = $test_array[1];
-              //  $test = $tests;
-            } elseif ($deviceId == 'RTP6576576' ) {
-                $test = $test_array[0];
-              //  $test = $tests;
-            } else {
+        //         $test = $test_array[2];
+        //       //  $test = $tests;
+        //     } elseif ($deviceId == 'FRT654576544' ) {
+        //         $test = $test_array[1];
+        //       //  $test = $tests;
+        //     } elseif ($deviceId == 'RTP6576576' ) {
+        //         $test = $test_array[0];
+        //       //  $test = $tests;
+        //     } else {
 
-                $test = [];
-            }
-        }  else {
+        //         $test = [];
+        //     }
+        // }  else {
 
-            $test = [];
-        }
+        //     $test = [];
+        // }
        
     
-        if (count($test) <= 0) {
+        // if (count($test) <= 0) {
            
-            return response(['success' => false, 'code' => 201, 'message' => "Invalid test"]);
-        } else {
+        //     return response(['success' => false, 'code' => 201, 'message' => "Invalid test"]);
+        // } else {
 
           
+            $test_data=DB::table('tests')->select('*')->where(['id'=>$testId])->get();
+            $device_data=DB::table('devices')->select('*')->where(['device_id'=>$deviceId])->get();
+
+            $device_array=array();
+            $device_array=[
+
+                "id"=>$device_data[0]->id,
+                "device_id"=>$device_data[0]->device_id,
+                "device_name"=>$device_data[0]->device_name,
+                "created_at"=>date('d-m-Y H:i:s',strtotime($device_data[0]->created_at)),
+                "updated_at"=>null
+
+
+            ];
             $testValidity=date('Y-m-d H:i:s',strtotime('+5 min')); 
          
       
@@ -141,19 +153,30 @@ class NotificationController extends BaseController
             $start_test->user_id=$user->id;
             $start_test->validity =$testValidity;
             $start_test->status ='true';
-            $start_test->location =$test['location'];
-            $start_test->deviceId = $test['device']['device_id'];
-            $start_test->testId =$test['id'];
-            $start_test->test_name =$test['test_name'];
+            $start_test->location =$location;
+            $start_test->deviceId =$deviceId;
+            $start_test->testId =$testId;
+            $start_test->test_name =$test_data[0]->test;
             $start_test->save();
 
-            $test['test_duration']=5;
+            $test=array();
+            $test=[
 
-           
+                'id' =>$test_data[0]->id,
+                'date' =>date('d-m-Y H:i:s'),
+                'device' =>$device_array,
+                'test_name' =>$test_data[0]->test,
+                'location' =>$location,
+                'test_duration'=>5
+            
+
+
+            ];
+
             return apiResponse(true, 200, $test['test_name']." result will be available in next " .$test['test_duration']. " minutes.", $test);
                 
               
-        }
+       // }
 
     
         
@@ -170,99 +193,115 @@ class NotificationController extends BaseController
         
         if(count($checkuserTest)>0){ 
 
-            // $current_time=date('Y-m-d H:i:s');
-            // if($current_time > $checkuserTest[0]->validity){
-
-            //     $update_status = DB::table('start_test')
-            //     ->where('user_id', $checkuserTest[0]->user_id)
-            //     ->update([
-            //         'status' =>'false',
-            //        // 'validity' => date('Y-m-d H:i:s')
-            //     ]);  
-            //     $this->notifyUser($user->device_token);
-            // }
-
-            $test_array = [
+            
+            // $test_array = [
 
 
-                [
-                    'id' => 3,
-                    'date' => date('d-m-Y H:i:s',strtotime($checkuserTest[0]->created_at)),
-                    'device' => [
+            //     [
+            //         'id' => 3,
+            //         'date' => date('d-m-Y H:i:s',strtotime($checkuserTest[0]->created_at)),
+            //         'device' => [
     
-                        "id" => 3,
-                        "device_id" => "RTP6576576",
-                        "device_name" => "device 3",
-                        "created_at" => "27-07-2021 00:00:00",
-                        "updated_at" => null
-    
-    
-                    ],
-                    'test_name' => 'Asthma test',
-                    "location" => $checkuserTest[0]->location,
-                    "test_duration"=>5
-                ],
-                [
-                    'id' => 1,
-                    'date' => date('d-m-Y H:i:s',strtotime($checkuserTest[0]->created_at)),
-                    'device' => [
-    
-                        "id" => 2,
-                        "device_id" => "FRT654576544",
-                        "device_name" => "device 2",
-                        "created_at" => "24-07-2021 00:00:00",
-                        "updated_at" => null
+            //             "id" => 3,
+            //             "device_id" => "RTP6576576",
+            //             "device_name" => "device 3",
+            //             "created_at" => "27-07-2021 00:00:00",
+            //             "updated_at" => null
     
     
-                    ],
-                    'test_name' => 'Covid-19 test',
-                    "location" => $checkuserTest[0]->location,
-                    "test_duration"=>5
-                ],
-                [
-                    'id' => 2,
-                    'date' => date('d-m-Y H:i:s',strtotime($checkuserTest[0]->created_at)),
-                    'device' => [
+            //         ],
+            //         'test_name' => 'Asthma test',
+            //         "location" => $checkuserTest[0]->location,
+            //         "test_duration"=>5
+            //     ],
+            //     [
+            //         'id' => 1,
+            //         'date' => date('d-m-Y H:i:s',strtotime($checkuserTest[0]->created_at)),
+            //         'device' => [
     
-                        "id" => 1,
-                        "device_id" => "ASD23242342",
-                        "device_name" => "device 1",
-                        "created_at" => "21-07-2021 00:00:00",
-                        "updated_at" => null
-    
-    
-                    ],
-                    'test_name' => 'Fungus test',
-                    "location" => $checkuserTest[0]->location,
-                    "test_duration"=>5
-    
-                ],
+            //             "id" => 2,
+            //             "device_id" => "FRT654576544",
+            //             "device_name" => "device 2",
+            //             "created_at" => "24-07-2021 00:00:00",
+            //             "updated_at" => null
     
     
-            ];
+            //         ],
+            //         'test_name' => 'Covid-19 test',
+            //         "location" => $checkuserTest[0]->location,
+            //         "test_duration"=>5
+            //     ],
+            //     [
+            //         'id' => 2,
+            //         'date' => date('d-m-Y H:i:s',strtotime($checkuserTest[0]->created_at)),
+            //         'device' => [
+    
+            //             "id" => 1,
+            //             "device_id" => "ASD23242342",
+            //             "device_name" => "device 1",
+            //             "created_at" => "21-07-2021 00:00:00",
+            //             "updated_at" => null
+    
+    
+            //         ],
+            //         'test_name' => 'Fungus test',
+            //         "location" => $checkuserTest[0]->location,
+            //         "test_duration"=>5
+    
+            //     ],
+    
+    
+            // ];
          
-            if ($checkuserTest[0]->deviceId != '') {
+            // if ($checkuserTest[0]->deviceId != '') {
     
     
-                if ($checkuserTest[0]->deviceId == 'ASD23242342' ) {
+            //     if ($checkuserTest[0]->deviceId == 'ASD23242342' ) {
     
-                    $test = $test_array[2];
-                  //  $test = $tests;
-                } elseif ($checkuserTest[0]->deviceId == 'FRT654576544') {
-                    $test = $test_array[1];
-                  //  $test = $tests;
-                } elseif ($checkuserTest[0]->deviceId == 'RTP6576576') {
-                    $test = $test_array[0];
-                  //  $test = $tests;
-                } else {
+            //         $test = $test_array[2];
+            //       //  $test = $tests;
+            //     } elseif ($checkuserTest[0]->deviceId == 'FRT654576544') {
+            //         $test = $test_array[1];
+            //       //  $test = $tests;
+            //     } elseif ($checkuserTest[0]->deviceId == 'RTP6576576') {
+            //         $test = $test_array[0];
+            //       //  $test = $tests;
+            //     } else {
     
-                    $test = [];
-                }
-            }  else {
+            //         $test = [];
+            //     }
+            // }  else {
     
-                $test = [];
-            }
-           
+            //     $test = [];
+            // }
+            
+            $device_data=DB::table('devices')->select('*')->where(['device_id'=>$checkuserTest[0]->deviceId])->get();
+
+            $device_array=array();
+
+            $device_array=[
+
+                "id"=>$device_data[0]->id,
+                "device_id"=>$device_data[0]->device_id,
+                "device_name"=>$device_data[0]->device_name,
+                "created_at"=>date('d-m-Y H:i:s',strtotime($device_data[0]->created_at)),
+                "updated_at"=>null
+
+
+            ];
+            $test=array();
+            $test=[
+
+                'id' =>$checkuserTest[0]->testId,
+                'date' =>date('d-m-Y H:i:s',strtotime($checkuserTest[0]->created_at)),
+                'device' =>$device_array,
+                'test_name' =>$checkuserTest[0]->test_name,
+                'location' =>$checkuserTest[0]->location,
+                'test_duration'=>5
+            
+
+
+            ];
         
             if (count($test) <= 0) {
                 
