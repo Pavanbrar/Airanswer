@@ -675,7 +675,7 @@ class AuthController extends BaseController
 
 
                 ],
-                'test_name' => 'asthma test',
+                'test_name' => 'Asthma test',
                 "location" => "india"
             ],
             [
@@ -691,7 +691,7 @@ class AuthController extends BaseController
 
 
                 ],
-                'test_name' => 'Covid Test',
+                'test_name' => 'Covid-19 test',
                 "location" => "america"
             ],
             [
@@ -707,7 +707,7 @@ class AuthController extends BaseController
 
 
                 ],
-                'test_name' => 'Thyroid Test',
+                'test_name' => 'Fungus test',
                 "location" => "south africa"
 
             ],
