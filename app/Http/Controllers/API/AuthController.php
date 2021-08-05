@@ -367,10 +367,13 @@ class AuthController extends BaseController
 
     public function logout(Request $request)
     {
-        $user=request()->user();
+         $user=request()->user();
+         $token = request()->user()->currentAccessToken()->token;
+ 
        // $remove_device_token= DB::table('users')->where('id', $user->id)->update(['device_token'=>'']);
-        $remove_device_token= DB::table('device_token_table')->where('user_id', $user->id)->delete();
-        auth()->user()->tokens()->delete();
+        $remove_device_token= DB::table('device_token_table')->where(['user_id'=>$user->id,'token'=>$token])->delete();
+        $remove_token= DB::table('personal_access_tokens')->where(['tokenable_id'=>$user->id,'token'=>$token])->delete();
+     //   auth()->user()->tokens()->delete();
        
 
         return response(['success' => true, 'code' => 200, 'message' => "User successfully logout"]);
@@ -479,9 +482,17 @@ class AuthController extends BaseController
         // ->update([
         //     'device_token' =>$device_token
          
-        // ]);  
-        DB::table('device_token_table')->insert(['user_id'=>$user->id,'device_token'=>$device_token]);
+        // ]); 
+    
+        foreach($user->tokens as $token){
+            
+            $token_for_personal =$token->token;
+        
+        }
 
+     //insert device token and token in device_token_table//
+    
+        DB::table('device_token_table')->insert(['user_id'=>$user->id,'device_token'=>$device_token,'token'=>$token_for_personal]);
 
         return apiResponse(true, 200, "Logged in successfully", $response);
     }
