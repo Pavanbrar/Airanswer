@@ -499,7 +499,19 @@ class AuthController extends BaseController
     public function update(Request $request, $id)
     {
         $user = User::find($id);
-        $user->update($request->all());
+      
+       
+        $user->firstname = $request->firstname;
+        $user->lastname = $request->lastname;
+        $user->username = $request->username;
+        $user->dob = date("Y-m-d", strtotime($request->dob));
+        $user->phone = $request->phone;
+        $user->gender = $request->gender;
+        $user->email = $request->email;
+        $user->company_name = $request->company_name;
+        $user->email = $request->email;
+      
+        $user->save();
         $response = [
             'user_id' => $user->id,
             'username' => $user->username,
